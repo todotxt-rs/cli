@@ -13,6 +13,11 @@ use errors::*;
 use list::*;
 use opts::Opt;
 
+#[cfg(not(feature = "extended"))]
+pub(crate) type Task = todo_txt::Task;
+#[cfg(feature = "extended")]
+pub(crate) type Task = todo_txt::task::Extended;
+
 fn main() -> Result {
     use clap::Parser;
     use envir::Serialize;
@@ -58,6 +63,8 @@ fn main() -> Result {
             Listpri(arg) => commands::listpri(&config, &arg),
             Listproj(arg) => commands::listproj(&config, &arg),
             Move(arg) => commands::r#move(&config, &arg),
+            #[cfg(feature = "extended")]
+            Note(arg) => commands::note(&config, &arg),
             Prepend(arg) => commands::prepend(&config, &arg),
             Pri(arg) => commands::pri(&config, &arg),
             Replace(arg) => commands::replace(&config, &arg),

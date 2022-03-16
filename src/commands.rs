@@ -47,7 +47,7 @@ fn add_tasks(
     };
 
     for task in tasks.split('\n') {
-        let mut todo: todo_txt::Task = task.parse()?;
+        let mut todo: crate::Task = task.parse()?;
 
         if config.date_on_add && todo.create_date.is_none() {
             let today = todo_txt::date::today();
@@ -105,7 +105,8 @@ pub(crate) fn archive(config: &crate::Config) -> crate::Result {
         let index = i + 1;
 
         if todo.get(&index).finished {
-            let task = todo.remove(index);
+            let mut task = todo.remove(index);
+            archive_note(config, &mut task)?;
             done.push(task);
         } else {
             i += 1;
@@ -118,6 +119,28 @@ pub(crate) fn archive(config: &crate::Config) -> crate::Result {
     if config.verbose > 0 {
         println!("TODO: {} archived", config.todo_file);
     }
+
+    Ok(())
+}
+
+#[cfg(not(feature = "extended"))]
+fn archive_note(_: &crate::Config, _: &mut crate::Task) -> crate::Result {
+    Ok(())
+}
+
+#[cfg(feature = "extended")]
+fn archive_note(config: &crate::Config, task: &mut crate::Task) -> crate::Result {
+    if let Some(note) = task.note.content() {
+        use std::io::Write;
+
+        let mut archive = std::fs::File::options()
+            .append(true)
+            .open(&config.note_archive)?;
+
+        archive.write_all(format!("{note}\n").as_bytes())?;
+    }
+
+    task.note.delete()?;
 
     Ok(())
 }
@@ -145,7 +168,7 @@ pub(crate) fn del(
     crate::opts::Del { item, filter }: &crate::opts::Del,
 ) -> crate::Result {
     if filter.term.is_none() {
-        if !confirm(config, format!("Delete {item}"))? {
+        if !confirm(config, &format!("Delete {item}"))? {
             return Ok(());
         }
 
@@ -274,7 +297,7 @@ fn print_list<P>(
     predicate: P,
 ) -> crate::Result<Summary>
 where
-    P: FnMut(&(usize, &todo_txt::Task)) -> bool,
+    P: FnMut(&(usize, &crate::Task)) -> bool,
 {
     let list = crate::List::from(file)?;
     let total = list.len();
@@ -375,7 +398,7 @@ fn filter_term(s: &str, crate::opts::Filter { term }: &crate::opts::Filter) -> b
     accept
 }
 
-fn print(config: &crate::Config, width: usize, (id, task): (usize, &todo_txt::Task)) -> String {
+fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)) -> String {
     let mut output = format!("{:0width$} ", id);
 
     if task.finished {
@@ -500,7 +523,7 @@ pub(crate) fn r#move(
     config: &crate::Config,
     crate::opts::Move { item, dest, src }: &crate::opts::Move,
 ) -> crate::Result {
-    if !confirm(config, format!("Move {item} form {src} to {dest}"))? {
+    if !confirm(config, &format!("Move {item} form {src} to {dest}"))? {
         return Ok(());
     }
 
@@ -519,6 +542,89 @@ pub(crate) fn r#move(
         println!("{item} {task}");
         println!("TODO: {item} item moved from '{src_file}' to '{dest_file}'");
     }
+
+    Ok(())
+}
+
+#[cfg(feature = "extended")]
+pub(crate) fn note(
+    config: &crate::Config,
+    subcommand: &crate::opts::Note,
+) -> crate::Result {
+    match subcommand {
+        crate::opts::Note::Add(item) => note_add(config, item),
+        crate::opts::Note::Archive => note_archive(config),
+        crate::opts::Note::Edit(item) => note_edit(config, item),
+        crate::opts::Note::Show(args) => note_show(config, args),
+    }
+}
+
+#[cfg(feature = "extended")]
+pub(crate) fn note_add(
+    config: &crate::Config,
+    crate::opts::Item { item }: &crate::opts::Item,
+) -> crate::Result {
+    let mut list = crate::List::from(&config.todo_file)?;
+
+    let todo = list.get_mut(item);
+    todo.note = todo_txt::task::Note::Short(String::new());
+    todo.note.write()?;
+
+    list.save()?;
+
+    println!("TODO: Note added to task {item}");
+
+    if !config.force && confirm(config, "Edit note?")? {
+        note_edit(config, &crate::opts::Item { item: *item })?;
+    }
+
+    Ok(())
+}
+
+#[cfg(feature = "extended")]
+pub(crate) fn note_edit(
+    config: &crate::Config,
+    crate::opts::Item { item }: &crate::opts::Item,
+) -> crate::Result {
+    let editor = std::env::var("EDITOR")
+        .map_err(|_| crate::Error::Env("EDITOR".to_string()))?;
+
+    let list = crate::List::from(&config.todo_file)?;
+
+    let filename = match &list.get(item).note {
+        todo_txt::task::Note::Long { filename , .. } => filename,
+        _ => {
+            println!("TODO: Task {item} has no note.");
+            return Ok(());
+        }
+    };
+
+    std::process::Command::new(editor)
+        .arg(format!("{}/{filename}", config.notes_dir))
+        .status()?;
+
+    Ok(())
+}
+
+#[cfg(feature = "extended")]
+pub(crate) fn note_show(
+    config: &crate::Config,
+    crate::opts::Item { item }: &crate::opts::Item,
+) -> crate::Result {
+    let list = crate::List::from(&config.todo_file)?;
+
+    if let Some(note) = list.get(item).note.content() {
+        print!("{note}");
+    } else {
+        println!("TODO: Task {item} has no note.");
+    }
+
+    Ok(())
+}
+
+#[cfg(feature = "extended")]
+pub(crate) fn note_archive(config: &crate::Config) -> crate::Result {
+    println!("{}", String::from_utf8_lossy(&std::fs::read(&config.note_archive)?));
 
     Ok(())
 }
@@ -644,7 +750,7 @@ pub(crate) fn external(config: &crate::Config, args: Vec<String>) -> crate::Resu
     Ok(())
 }
 
-fn confirm(config: &crate::Config, question: String) -> crate::Result<bool> {
+fn confirm(config: &crate::Config, question: &str) -> crate::Result<bool> {
     ask(config, &format!("{question}: (y/n)")).map(|x| x == "y\n" || (config.force && x.is_empty()))
 }
 

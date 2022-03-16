@@ -16,7 +16,7 @@ dotenv = "0.15"
 exec = "0.3"
 regex = "1.5"
 thiserror = "1.0"
-todo-txt = "3.0.0-beta.1"
+todo-txt = "3.0.0-beta.2"
 
 [dependencies.envir]
 version = "0.1"
@@ -29,3 +29,7 @@ features = ["derive"]
 [dev-dependencies]
 assert_cmd = "2.0"
 mktemp = "0.4"
+
+[features]
+default = ["extended"]
+extended = ["todo-txt/extended"]

@@ -153,6 +153,10 @@ pub(crate) enum Command {
     #[clap(alias = "mv")]
     Move(Move),
 
+    #[cfg(feature = "extended")]
+    #[clap(subcommand)]
+    Note(Note),
+
     /// Adds TEXT TO PREPEND to the beginning of the task on line ITEM#.
     ///
     /// Quotes optional.
@@ -232,6 +236,18 @@ pub(crate) struct Move {
     pub dest: String,
     #[clap(default_value = "todo.txt")]
     pub src: String,
+}
+
+#[cfg(feature = "extended")]
+#[derive(clap::Subcommand)]
+pub(crate) enum Note {
+    Archive,
+    #[clap(alias = "a")]
+    Add(Item),
+    #[clap(alias = "e")]
+    Edit(Item),
+    #[clap(alias = "s")]
+    Show(Item),
 }
 
 #[derive(clap::Parser)]

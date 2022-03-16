@@ -70,6 +70,10 @@ pub(crate) struct Config {
     pub final_filter: String,
     #[envir(default)]
     pub force: bool,
+    #[envir(noprefix, name = "TODO_NOTE_ARCHIVE", default = "${TODO_DIR}/notes/archive.txt")]
+    pub note_archive: String,
+    #[envir(noprefix, name = "TODO_NOTES_DIR", default = "${TODO_DIR}/notes")]
+    pub notes_dir: String,
     #[envir(default)]
     pub plain: bool,
     #[envir(default = "true")]

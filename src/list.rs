@@ -3,7 +3,7 @@ use anyhow::Context;
 #[derive(Clone, Debug, Default)]
 pub struct List {
     filename: String,
-    tasks: Vec<todo_txt::Task>,
+    tasks: Vec<crate::Task>,
 }
 
 impl List {
@@ -31,7 +31,7 @@ impl List {
         Ok(list)
     }
 
-    fn load(content: &str) -> crate::Result<Vec<todo_txt::Task>> {
+    fn load(content: &str) -> crate::Result<Vec<crate::Task>> {
         let mut tasks = Vec::new();
 
         for line in content.lines() {
@@ -64,23 +64,23 @@ impl List {
         self.tasks.len()
     }
 
-    pub fn get(&self, index: &usize) -> &todo_txt::Task {
+    pub fn get(&self, index: &usize) -> &crate::Task {
         &self.tasks[*index - 1]
     }
 
-    pub fn get_mut(&mut self, index: &usize) -> &mut todo_txt::Task {
+    pub fn get_mut(&mut self, index: &usize) -> &mut crate::Task {
         &mut self.tasks[*index - 1]
     }
 
-    pub fn remove(&mut self, index: usize) -> todo_txt::Task {
+    pub fn remove(&mut self, index: usize) -> crate::Task {
         self.tasks.remove(index - 1)
     }
 
-    pub fn push(&mut self, task: todo_txt::Task) {
+    pub fn push(&mut self, task: crate::Task) {
         self.tasks.push(task);
     }
 
-    pub fn iter(&self) -> std::slice::Iter<'_, todo_txt::Task> {
+    pub fn iter(&self) -> std::slice::Iter<'_, crate::Task> {
         self.tasks.iter()
     }
 

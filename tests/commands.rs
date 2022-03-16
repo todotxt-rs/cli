@@ -339,6 +339,22 @@ fn r#move() {
 }
 
 #[test]
+#[cfg(feature = "extended")]
+fn note() {
+    let task = "new task";
+    let Result { todo_dir, .. } = exec("add", &[task]);
+
+    let result = reexec(todo_dir, "note", &["show", "1"]);
+    assert_eq!(result.stdout, "TODO: Task 1 has no note.\n");
+
+    let result = reexec(result.todo_dir, "note", &["add", "1"]);
+    assert_eq!(result.stdout, "TODO: Note added to task 1\n");
+
+    let result = reexec(result.todo_dir, "note", &["show", "1"]);
+    assert_eq!(result.stdout, "");
+}
+
+#[test]
 fn prepend() {
     let task = "task";
     let Result { todo_dir, .. } = exec("add", &[task]);
