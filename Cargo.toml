@@ -1,0 +1,31 @@
+[package]
+name = "todo-txt-cli"
+version = "0.1.0"
+authors = ["Sanpi <sanpi@homecomputing.fr>"]
+description = "Cli for the todo.txt format"
+license = "MIT"
+keywords = ["todotxt"]
+repository = "https://github.com/sanpii/todo-txt"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+chrono = "0.4"
+colored = "2.0"
+dotenv = "0.15"
+exec = "0.3"
+regex = "1.5"
+thiserror = "1.0"
+todo-txt = "3.0.0-beta.1"
+
+[dependencies.envir]
+version = "0.1"
+features = ["extrapolation"]
+
+[dependencies.clap]
+version = "3.0"
+features = ["derive"]
+
+[dev-dependencies]
+assert_cmd = "2.0"
+mktemp = "0.4"
