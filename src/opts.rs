@@ -91,6 +91,10 @@ pub(crate) enum Command {
     #[clap(alias = "do")]
     Done(Item),
 
+    /// List or flag task ITEM#.
+    #[cfg(feature = "extended")]
+    Flag(Flag),
+
     /// Display help about usage, options, built-in and add-on actions, or just the usage help for
     /// the passed ACTION(s).
     Help,
@@ -204,6 +208,11 @@ pub(crate) struct Del {
     pub item: usize,
     #[clap(flatten)]
     pub filter: Filter,
+}
+
+#[derive(clap::Parser)]
+pub(crate) struct Flag {
+    pub item: Option<usize>,
 }
 
 #[derive(clap::Parser)]

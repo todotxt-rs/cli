@@ -142,6 +142,27 @@ fn hidden() {
 }
 
 #[test]
+#[cfg(feature = "extended")]
+fn flag() {
+    let task = "new task 1";
+    let Result { todo_dir, .. } = exec("add", &[task]);
+
+    let result = reexec(todo_dir, "flag", &[]);
+    assert_eq!(
+        result.stdout,
+        "--\nTODO: 0 of 1 tasks show\n"
+    );
+
+    let result = reexec(result.todo_dir, "flag", &["1"]);
+
+    let result = reexec(result.todo_dir, "flag", &[]);
+    assert_eq!(
+        result.stdout,
+        "1 🚩 new task 1\n--\nTODO: 1 of 1 tasks show\n"
+    );
+}
+
+#[test]
 fn filter() {
     let task = "new task 1\nnew task 2\nnew task 3";
     let Result { todo_dir, .. } = exec("addm", &[task]);

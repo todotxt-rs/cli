@@ -266,6 +266,24 @@ fn recurrence(config: &crate::Config, todo: &mut crate::List, task: &crate::Task
     }
 }
 
+pub(crate) fn flag(config: &crate::Config, item: usize) -> crate::Result {
+    let mut list = crate::List::from(&config.todo_file)?;
+    let task = list.get_mut(&item);
+    task.flagged = true;
+
+    list.save()
+}
+
+pub(crate) fn listflag(config: &crate::Config) -> crate::Result {
+    let summary = print_list(config, true, &config.todo_file, |(_, x)| {
+        x.flagged
+    })?;
+
+    print_summary(&[summary]);
+
+    Ok(())
+}
+
 pub(crate) fn list(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
     let now = todo_txt::date::today();
 
@@ -457,6 +475,11 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
 
     if !task.priority.is_lowest() {
         output.push_str(&format!("({}) ", task.priority));
+    }
+
+    #[cfg(feature = "extended")]
+    if task.flagged {
+        output.push_str("🚩 ");
     }
 
     let regex = regex::Regex::new(r#"(?P<number>[0-9]+)"#).unwrap();
