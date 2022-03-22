@@ -129,6 +129,19 @@ fn list() {
 }
 
 #[test]
+#[cfg(feature = "extended")]
+fn hidden() {
+    let task = "new task 1\nnew task 2\nhidden task h:1";
+    let Result { todo_dir, .. } = exec("addm", &[task]);
+
+    let result = reexec(todo_dir, "list", &[]);
+    assert_eq!(
+        result.stdout,
+        "1 new task 1\n2 new task 2\n--\nTODO: 2 of 3 tasks show\n"
+    );
+}
+
+#[test]
 fn filter() {
     let task = "new task 1\nnew task 2\nnew task 3";
     let Result { todo_dir, .. } = exec("addm", &[task]);

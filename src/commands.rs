@@ -270,7 +270,10 @@ pub(crate) fn list(config: &crate::Config, filter: &crate::opts::Filter) -> crat
     let now = todo_txt::date::today();
 
     let summary = print_list(config, true, &config.todo_file, |(_, x)| {
-        !x.finished && filter_term(&x.subject, filter) && now >= x.threshold_date.unwrap_or(now)
+        !x.finished
+            && filter_hidden(&x)
+            && filter_term(&x.subject, filter)
+            && now >= x.threshold_date.unwrap_or(now)
     })?;
 
     print_summary(&[summary]);
@@ -402,6 +405,16 @@ fn prefix(filename: &str) -> String {
     let path = std::path::PathBuf::from(filename);
 
     path.file_stem().unwrap().to_string_lossy().to_uppercase()
+}
+
+#[cfg(not(feature = "extended"))]
+fn filter_hidden(_: &crate::Task) -> bool {
+    true
+}
+
+#[cfg(feature = "extended")]
+fn filter_hidden(task: &crate::Task) -> bool {
+    !task.hidden
 }
 
 fn filter_term(s: &str, crate::opts::Filter { term }: &crate::opts::Filter) -> bool {
