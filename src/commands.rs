@@ -227,6 +227,7 @@ pub(crate) fn done(
         todo.get(item).clone()
     };
 
+    recurrence(config, &mut todo, &task);
     todo.save()?;
 
     if config.verbose > 0 {
@@ -235,6 +236,34 @@ pub(crate) fn done(
     }
 
     Ok(())
+}
+
+#[cfg(not(feature = "extended"))]
+fn recurrence(_: &crate::Config, _: &mut crate::List, _: &crate::Task) {
+}
+
+#[cfg(feature = "extended")]
+fn recurrence(config: &crate::Config, todo: &mut crate::List, task: &crate::Task) {
+    if let Some(ref recurrence) = task.recurrence {
+        let due = if recurrence.strict && task.due_date.is_some() {
+            task.due_date.unwrap()
+        } else {
+            todo_txt::date::today()
+        };
+
+        let mut new = task.clone();
+        new.uncomplete();
+        if config.date_on_add {
+            new.create_date = Some(todo_txt::date::today());
+        }
+        new.due_date = Some(recurrence.clone() + due);
+
+        if let Some(threshold_date) = task.threshold_date {
+            new.threshold_date = Some(recurrence.clone() + threshold_date);
+        }
+
+        todo.push(new);
+    }
 }
 
 pub(crate) fn list(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {

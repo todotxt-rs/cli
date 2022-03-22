@@ -375,6 +375,17 @@ fn pri() {
 }
 
 #[test]
+#[cfg(feature = "extended")]
+fn recurrence() {
+    let task = "new task 1 t:2020-01-01 due:2020-02-02 rec:+1y";
+    let Result { todo_dir, .. } = exec("add", &[task]);
+
+    let result = reexec(todo_dir, "done", &["1"]);
+    assert_eq!(result.done, "x new task 1 due:2020-02-02 t:2020-01-01 rec:+1y\n");
+    assert_eq!(result.todo, "new task 1 due:2021-02-02 t:2021-01-01 rec:+1y\n");
+}
+
+#[test]
 fn replace() {
     let task = "new task 1\nnew task 2";
     let Result { todo_dir, .. } = exec("addm", &[task]);
