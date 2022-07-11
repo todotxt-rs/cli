@@ -1,6 +1,7 @@
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub(crate) enum Color {
     Colored(colored::Color),
+    #[default]
     None,
     Raw(String),
 }
@@ -38,12 +39,6 @@ impl std::str::FromStr for Color {
         };
 
         Ok(color)
-    }
-}
-
-impl Default for Color {
-    fn default() -> Self {
-        Self::None
     }
 }
 
