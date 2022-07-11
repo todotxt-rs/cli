@@ -186,7 +186,8 @@ pub(crate) enum Command {
 
 #[derive(clap::Parser)]
 pub(crate) struct Add {
-    pub task: Option<String>,
+    #[clap(default_value = "Vec::new")]
+    pub task: Vec<String>,
 }
 
 #[derive(clap::Parser)]

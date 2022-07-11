@@ -41,9 +41,10 @@ fn add_tasks(
     let mut summary = String::new();
     let mut list = crate::List::from(dest)?;
 
-    let tasks = match task {
-        Some(task) => task.clone(),
-        None => ask(config, "Add:")?,
+    let tasks = if task.is_empty() {
+        ask(config, "Add:")?
+    } else {
+        task.join(" ")
     };
 
     for task in tasks.split('\n') {
@@ -78,9 +79,10 @@ pub(crate) fn append(
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
 
-    let text = match &add.task {
-        Some(text) => text.clone(),
-        None => ask(config, "Append:")?,
+    let text = if add.task.is_empty() {
+        ask(config, "Append:")?
+    } else {
+        add.task.join(" ")
     };
 
     list.get_mut(item).subject.push_str(&format!(" {text}"));
@@ -700,9 +702,10 @@ pub(crate) fn prepend(
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
 
-    let mut text = match &add.task {
-        Some(text) => text.clone(),
-        None => ask(config, "Prepend:")?,
+    let mut text = if add.task.is_empty() {
+        ask(config, "Prepend:")?
+    } else {
+        add.task.join(" ")
     };
 
     if !text.ends_with(' ') {

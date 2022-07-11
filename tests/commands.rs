@@ -25,11 +25,9 @@ fn action() {
 
 #[test]
 fn add() {
-    let task = "new task";
-
-    let result = exec("add", &[task]);
-    assert_eq!(result.todo, format!("{task}\n"));
-    assert_eq!(result.stdout, format!("1 {task}\n"));
+    let result = exec("add", &["new", "task"]);
+    assert_eq!(result.todo, format!("new task\n"));
+    assert_eq!(result.stdout, format!("1 new task\n"));
 }
 
 #[test]
