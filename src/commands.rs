@@ -525,6 +525,11 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
         output.push_str(&color.colorize(&format!(" t:{}", threshold_date.format("%Y-%m-%d"))));
     }
 
+    #[cfg(feature = "extended")]
+    if let Some(recurrence) = &task.recurrence {
+        output.push_str(&color.colorize(&format!(" rec:{recurrence}")));
+    }
+
     for (key, value) in &task.tags {
         output.push_str(&color.colorize(&format!(" {key}:{value}")));
     }
