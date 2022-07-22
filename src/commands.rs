@@ -484,6 +484,11 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
         output.push_str("🚩 ");
     }
 
+    #[cfg(feature = "extended")]
+    if task.has_note() {
+        output.push_str("📓 ");
+    }
+
     let regex = regex::Regex::new(r#"(?P<number>[0-9]+)"#).unwrap();
     let subject = regex.replace_all(&task.subject, |caps: &regex::Captures| {
         config.colors.number.colorize(&caps["number"])
