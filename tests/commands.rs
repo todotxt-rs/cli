@@ -146,10 +146,7 @@ fn flag() {
     let Result { todo_dir, .. } = exec("add", &[task]);
 
     let result = reexec(todo_dir, "flag", &[]);
-    assert_eq!(
-        result.stdout,
-        "--\nTODO: 0 of 1 tasks show\n"
-    );
+    assert_eq!(result.stdout, "--\nTODO: 0 of 1 tasks show\n");
 
     let result = reexec(result.todo_dir, "flag", &["1"]);
 
@@ -413,8 +410,14 @@ fn recurrence() {
     let Result { todo_dir, .. } = exec("add", &[task]);
 
     let result = reexec(todo_dir, "done", &["1"]);
-    assert_eq!(result.done, "x new task 1 due:2020-02-02 t:2020-01-01 rec:+1y\n");
-    assert_eq!(result.todo, "new task 1 due:2021-02-02 t:2021-01-01 rec:+1y\n");
+    assert_eq!(
+        result.done,
+        "x new task 1 due:2020-02-02 t:2020-01-01 rec:+1y\n"
+    );
+    assert_eq!(
+        result.todo,
+        "new task 1 due:2021-02-02 t:2021-01-01 rec:+1y\n"
+    );
 }
 
 #[test]

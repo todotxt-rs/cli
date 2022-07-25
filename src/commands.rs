@@ -241,8 +241,7 @@ pub(crate) fn done(
 }
 
 #[cfg(not(feature = "extended"))]
-fn recurrence(_: &crate::Config, _: &mut crate::List, _: &crate::Task) {
-}
+fn recurrence(_: &crate::Config, _: &mut crate::List, _: &crate::Task) {}
 
 #[cfg(feature = "extended")]
 fn recurrence(config: &crate::Config, todo: &mut crate::List, task: &crate::Task) {
@@ -277,9 +276,7 @@ pub(crate) fn flag(config: &crate::Config, item: usize) -> crate::Result {
 }
 
 pub(crate) fn listflag(config: &crate::Config) -> crate::Result {
-    let summary = print_list(config, true, &config.todo_file, |(_, x)| {
-        x.flagged
-    })?;
+    let summary = print_list(config, true, &config.todo_file, |(_, x)| x.flagged)?;
 
     print_summary(&[summary]);
 
@@ -624,10 +621,7 @@ pub(crate) fn r#move(
 }
 
 #[cfg(feature = "extended")]
-pub(crate) fn note(
-    config: &crate::Config,
-    subcommand: &crate::opts::Note,
-) -> crate::Result {
+pub(crate) fn note(config: &crate::Config, subcommand: &crate::opts::Note) -> crate::Result {
     match subcommand {
         crate::opts::Note::Add(item) => note_add(config, item),
         crate::opts::Note::Archive => note_archive(config),
@@ -663,13 +657,12 @@ pub(crate) fn note_edit(
     config: &crate::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
-    let editor = std::env::var("EDITOR")
-        .map_err(|_| crate::Error::Env("EDITOR".to_string()))?;
+    let editor = std::env::var("EDITOR").map_err(|_| crate::Error::Env("EDITOR".to_string()))?;
 
     let list = crate::List::from(&config.todo_file)?;
 
     let filename = match &list.get(item).note {
-        todo_txt::task::Note::Long { filename , .. } => filename,
+        todo_txt::task::Note::Long { filename, .. } => filename,
         _ => {
             println!("TODO: Task {item} has no note.");
             return Ok(());
@@ -701,7 +694,10 @@ pub(crate) fn note_show(
 
 #[cfg(feature = "extended")]
 pub(crate) fn note_archive(config: &crate::Config) -> crate::Result {
-    println!("{}", String::from_utf8_lossy(&std::fs::read(&config.note_archive)?));
+    println!(
+        "{}",
+        String::from_utf8_lossy(&std::fs::read(&config.note_archive)?)
+    );
 
     Ok(())
 }

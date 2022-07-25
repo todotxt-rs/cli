@@ -70,7 +70,11 @@ pub(crate) struct Config {
     pub final_filter: String,
     #[envir(default)]
     pub force: bool,
-    #[envir(noprefix, name = "TODO_NOTE_ARCHIVE", default = "${TODO_DIR}/notes/archive.txt")]
+    #[envir(
+        noprefix,
+        name = "TODO_NOTE_ARCHIVE",
+        default = "${TODO_DIR}/notes/archive.txt"
+    )]
     pub note_archive: String,
     #[envir(noprefix, name = "TODO_NOTES_DIR", default = "${TODO_DIR}/notes")]
     pub notes_dir: String,
@@ -152,7 +156,10 @@ fn load_config_file() {
 
             format!("{}/todo.cfg", path.display())
         }),
-        Box::new(|| std::env::var("TODOTXT_GLOBAL_CFG_FILE").unwrap_or_else(|_| "/etc/todo/config".to_string())),
+        Box::new(|| {
+            std::env::var("TODOTXT_GLOBAL_CFG_FILE")
+                .unwrap_or_else(|_| "/etc/todo/config".to_string())
+        }),
     ];
 
     for config in configs {

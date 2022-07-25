@@ -54,11 +54,13 @@ fn main() -> Result {
             Del(arg) => commands::del(&config, &arg),
             Delpri(arg) => commands::delpri(&config, &arg),
             Done(arg) => commands::done(&config, &arg),
-            Flag(arg) => if let Some(item) = arg.item {
-                commands::flag(&config, item)
-            } else {
-                commands::listflag(&config)
-            },
+            Flag(arg) => {
+                if let Some(item) = arg.item {
+                    commands::flag(&config, item)
+                } else {
+                    commands::listflag(&config)
+                }
+            }
             Help => help(&config),
             List(arg) => commands::list(&config, &arg),
             Listall(arg) => commands::listall(&config, &arg),
