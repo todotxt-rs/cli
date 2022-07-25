@@ -1,3 +1,5 @@
+use std::fmt::Write as _;
+
 struct Summary {
     file: String,
     total: usize,
@@ -63,7 +65,7 @@ fn add_tasks(
 
         list.push(todo);
 
-        summary.push_str(&format!("{} {task}\n", list.len()));
+        writeln!(summary, "{} {task}", list.len())?;
     }
 
     list.save()?;
@@ -85,7 +87,7 @@ pub(crate) fn append(
         add.task.join(" ")
     };
 
-    list.get_mut(item).subject.push_str(&format!(" {text}"));
+    write!(list.get_mut(item).subject, " {text}")?;
 
     list.save()?;
 
@@ -288,7 +290,7 @@ pub(crate) fn list(config: &crate::Config, filter: &crate::opts::Filter) -> crat
 
     let summary = print_list(config, true, &config.todo_file, |(_, x)| {
         !x.finished
-            && filter_hidden(&x)
+            && filter_hidden(x)
             && filter_term(&x.subject, filter)
             && now >= x.threshold_date.unwrap_or(now)
     })?;
@@ -465,15 +467,25 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
     }
 
     if let Some(finish_date) = task.finish_date {
-        output.push_str(&config.colors.date.colorize(&format!("{finish_date} ")));
+        write!(
+            output,
+            "{} ",
+            config.colors.date.colorize(&finish_date.to_string())
+        )
+        .ok();
     }
 
     if let Some(create_date) = task.create_date {
-        output.push_str(&config.colors.date.colorize(&format!("{create_date} ")));
+        write!(
+            output,
+            "{} ",
+            config.colors.date.colorize(&create_date.to_string())
+        )
+        .ok();
     }
 
     if !task.priority.is_lowest() {
-        output.push_str(&format!("({}) ", task.priority));
+        write!(output, "({}) ", task.priority).ok();
     }
 
     #[cfg(feature = "extended")]

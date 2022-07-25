@@ -92,10 +92,12 @@ impl List {
 
 impl ToString for List {
     fn to_string(&self) -> String {
+        use std::fmt::Write as _;
+
         let mut s = String::new();
 
         for task in &self.tasks {
-            s.push_str(&format!("{task}\n"));
+            writeln!(s, "{task}").ok();
         }
 
         s

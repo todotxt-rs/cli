@@ -230,13 +230,13 @@ fn color() {
             r#"(yellow)1 (A) Make peace between Cylons and humans (red)+PeaceProject{reset}{reset}
 (green)2 (B) Report to <i>Admiral Adama</i> about FTL (blue)@CIC{reset} (red)+Galactica\Repairs{reset}(cyan) due:2013-05-24{reset}{reset}
 (blue)4 (C) Upgrade jump drives with Cylon technology (red)+Galactica\Repairs{reset}{reset}
-3 (light blue)2016-12-08 {reset}Feed Schrodinger's Cat (light grey)5{reset} times(cyan) due:2014-02-23{reset}
-5 (light blue)2016-12-12 {reset}(red)+Galactica\Repairs{reset} Check hull integrity(cyan) due:2016-12-12{reset}
+3 (light blue)2016-12-08{reset} Feed Schrodinger's Cat (light grey)5{reset} times(cyan) due:2014-02-23{reset}
+5 (light blue)2016-12-12{reset} (red)+Galactica\Repairs{reset} Check hull integrity(cyan) due:2016-12-12{reset}
 6 Check for <b>DRADIS</b> contact (blue)@CIC{reset}
 7 Check if http://google.com is available
 8 Download code from <br/> https://github.com/QTodoTxt/QTodoTxt/archive/master.zip <br/>and give it a try!
 9 Think about <u>future</u>(cyan) t:2099-12-31{reset}
-(gray)0 x (light blue)2016-02-21 {reset}(B) Seal ship's cracks with biomatter (red)+Galactica\Repairs{reset}{reset}
+(gray)0 x (light blue)2016-02-21{reset} (B) Seal ship's cracks with biomatter (red)+Galactica\Repairs{reset}{reset}
 --
 TODO: 9 of 9 tasks show
 DONE: 1 of 1 tasks show
