@@ -94,7 +94,7 @@ pub(crate) struct Config {
     #[envir(noprefix, default = "${TODO_DIR}/report.txt")]
     pub report_file: String,
     #[envir(default = "1")]
-    pub verbose: u32,
+    pub verbose: u8,
 }
 
 impl Config {
