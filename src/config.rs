@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 #[derive(Clone, envir::Deserialize, envir::Serialize)]
 #[envir(prefix = "COLOR_")]
-pub(crate) struct Colors {
+pub struct Colors {
     #[envir(default)]
     pub context: crate::Color,
     #[envir(default)]
@@ -53,7 +53,7 @@ impl Colors {
 
 #[derive(envir::Deserialize, envir::Serialize)]
 #[envir(prefix = "TODOTXT_")]
-pub(crate) struct Config {
+pub struct Config {
     #[envir(noprefix, name = "TODO_ACTIONS_DIR", default = "${HOME}/.todo/actions")]
     pub action_dir: String,
     #[envir(default = "true")]
@@ -98,7 +98,7 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    pub fn from_opt(opt: &crate::Opt) -> Self {
+    pub(crate) fn from_opt(opt: &crate::Opt) -> Self {
         let mut config = Self::from_env();
 
         config.auto_archive |= !opt.dont_auto_archive;
@@ -113,63 +113,65 @@ impl Config {
     }
 
     pub fn from_env() -> Self {
+        Self::load_env();
+
         envir::from_env().unwrap()
     }
-}
 
-pub fn load_env() {
-    std::env::set_var("NONE", "");
-    std::env::set_var("BLACK", "\x1B[0;30m");
-    std::env::set_var("RED", "\x1B[0;31m");
-    std::env::set_var("GREEN", "\x1B[0;32m");
-    std::env::set_var("BROWN", "\x1B[0;33m");
-    std::env::set_var("BLUE", "\x1B[0;34m");
-    std::env::set_var("PURPLE", "\x1B[0;35m");
-    std::env::set_var("CYAN", "\x1B[0;36m");
-    std::env::set_var("LIGHT_GREY", "\x1B[0;37m");
-    std::env::set_var("DARK_GREY", "\x1B[1;30m");
-    std::env::set_var("LIGHT_RED", "\x1B[1;31m");
-    std::env::set_var("LIGHT_GREEN", "\x1B[1;32m");
-    std::env::set_var("YELLOW", "\x1B[1;33m");
-    std::env::set_var("LIGHT_BLUE", "\x1B[1;3");
-    std::env::set_var("LIGHT_PURPLE", "\x1B[1;35m");
-    std::env::set_var("LIGHT_CYAN", "\x1B[1;36m");
-    std::env::set_var("WHITE", "\x1B[1;37m");
-    std::env::set_var("DEFAULT", "\x1B[0m");
+    pub fn load_env() {
+        std::env::set_var("NONE", "");
+        std::env::set_var("BLACK", "\x1B[0;30m");
+        std::env::set_var("RED", "\x1B[0;31m");
+        std::env::set_var("GREEN", "\x1B[0;32m");
+        std::env::set_var("BROWN", "\x1B[0;33m");
+        std::env::set_var("BLUE", "\x1B[0;34m");
+        std::env::set_var("PURPLE", "\x1B[0;35m");
+        std::env::set_var("CYAN", "\x1B[0;36m");
+        std::env::set_var("LIGHT_GREY", "\x1B[0;37m");
+        std::env::set_var("DARK_GREY", "\x1B[1;30m");
+        std::env::set_var("LIGHT_RED", "\x1B[1;31m");
+        std::env::set_var("LIGHT_GREEN", "\x1B[1;32m");
+        std::env::set_var("YELLOW", "\x1B[1;33m");
+        std::env::set_var("LIGHT_BLUE", "\x1B[1;3");
+        std::env::set_var("LIGHT_PURPLE", "\x1B[1;35m");
+        std::env::set_var("LIGHT_CYAN", "\x1B[1;36m");
+        std::env::set_var("WHITE", "\x1B[1;37m");
+        std::env::set_var("DEFAULT", "\x1B[0m");
 
-    load_config_file();
-}
+        Self::load_config_file();
+    }
 
-#[cfg(not(debug_assertions))]
-fn load_config_file() {
-    let home = std::env::var("HOME").unwrap();
+    #[cfg(not(debug_assertions))]
+    fn load_config_file() {
+        let home = std::env::var("HOME").unwrap();
 
-    let configs: Vec<Box<dyn Fn() -> String>> = vec![
-        Box::new(|| format!("{home}/.todo/config")),
-        Box::new(|| format!("{home}/todo.cfg")),
-        Box::new(|| format!("{home}/.todo.cfg")),
-        Box::new(|| format!("{home}/.config/todo/config")),
-        Box::new(|| {
-            let filename = std::env::args().next().unwrap();
-            let mut path = std::path::PathBuf::from(filename);
-            path.pop();
+        let configs: Vec<Box<dyn Fn() -> String>> = vec![
+            Box::new(|| format!("{home}/.todo/config")),
+            Box::new(|| format!("{home}/todo.cfg")),
+            Box::new(|| format!("{home}/.todo.cfg")),
+            Box::new(|| format!("{home}/.config/todo/config")),
+            Box::new(|| {
+                let filename = std::env::args().next().unwrap();
+                let mut path = std::path::PathBuf::from(filename);
+                path.pop();
 
-            format!("{}/todo.cfg", path.display())
-        }),
-        Box::new(|| {
-            std::env::var("TODOTXT_GLOBAL_CFG_FILE")
-                .unwrap_or_else(|_| "/etc/todo/config".to_string())
-        }),
-    ];
+                format!("{}/todo.cfg", path.display())
+            }),
+            Box::new(|| {
+                std::env::var("TODOTXT_GLOBAL_CFG_FILE")
+                    .unwrap_or_else(|_| "/etc/todo/config".to_string())
+            }),
+        ];
 
-    for config in configs {
-        if dotenv::from_path(config()).is_ok() {
-            break;
+        for config in configs {
+            if dotenv::from_path(config()).is_ok() {
+                break;
+            }
         }
     }
-}
 
-#[cfg(debug_assertions)]
-fn load_config_file() {
-    dotenv::dotenv().ok();
+    #[cfg(debug_assertions)]
+    fn load_config_file() {
+        dotenv::dotenv().ok();
+    }
 }

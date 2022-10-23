@@ -1,5 +1,5 @@
 #[derive(Clone, Debug, Default)]
-pub(crate) enum Color {
+pub enum Color {
     Colored(colored::Color),
     #[default]
     None,
