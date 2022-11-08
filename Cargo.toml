@@ -28,7 +28,7 @@ features = ["derive"]
 
 [dev-dependencies]
 assert_cmd = "2.0"
-mktemp = "0.4"
+mktemp = "0.5"
 
 [features]
 default = ["extended"]
