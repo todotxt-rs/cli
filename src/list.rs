@@ -43,8 +43,7 @@ impl List {
                 Ok(task) => tasks.push(task),
                 Err(_) => {
                     return Err(anyhow::anyhow!(crate::Error::List(format!(
-                        "Invalid tasks: '{}'",
-                        line
+                        "Invalid tasks: '{line}'"
                     ))));
                 }
             };

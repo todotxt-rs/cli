@@ -460,7 +460,7 @@ fn filter_term(s: &str, crate::opts::Filter { term }: &crate::opts::Filter) -> b
 }
 
 fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)) -> String {
-    let mut output = format!("{:0width$} ", id);
+    let mut output = format!("{id:0width$} ");
 
     if task.finished {
         output.push_str("x ");
