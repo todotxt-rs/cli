@@ -293,7 +293,7 @@ fn listcon() {
     let todo_dir = setup();
 
     let result = reexec(todo_dir, "listcon", &[]);
-    assert_eq!(result.stdout, "cic\n");
+    assert_eq!(result.stdout, "CIC\n");
 }
 
 #[test]
@@ -343,10 +343,10 @@ fn listproj() {
     let todo_dir = setup();
 
     let result = reexec(todo_dir, "listproj", &[]);
-    assert_eq!(result.stdout, "peaceproject\ngalactica\\repairs\n");
+    assert_eq!(result.stdout, "PeaceProject\nGalactica\\Repairs\n");
 
     let result = reexec(result.todo_dir, "listproj", &["galactica"]);
-    assert_eq!(result.stdout, "galactica\\repairs\n");
+    assert_eq!(result.stdout, "Galactica\\Repairs\n");
 }
 
 #[test]
