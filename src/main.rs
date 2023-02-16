@@ -73,7 +73,7 @@ fn main() -> Result {
             Pri(arg) => commands::pri(&config, &arg),
             Replace(arg) => commands::replace(&config, &arg),
             Report => commands::report(&config),
-            External(arg) => commands::external(&config, arg),
+            External(arg) => commands::external(&config, &arg),
         }
     } else {
         help(&config)
@@ -117,8 +117,8 @@ fn help(config: &Config) -> Result {
             Err(_) => continue,
         };
 
-        let args = vec![command, "usage".to_string()];
-        commands::external(config, args).ok();
+        let args = [command, "usage".to_string()];
+        commands::external(config, &args).ok();
     }
 
     Ok(())

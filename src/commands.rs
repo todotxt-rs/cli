@@ -816,13 +816,13 @@ pub(crate) fn report(config: &crate::Config) -> crate::Result {
     Ok(())
 }
 
-pub(crate) fn external(config: &crate::Config, args: Vec<String>) -> crate::Result {
+pub(crate) fn external(config: &crate::Config, args: &[String]) -> crate::Result {
     use anyhow::Context;
 
     let command = format!("{}/{}", config.action_dir, args[0]);
 
     std::process::Command::new(&command)
-        .args(&args)
+        .args(args)
         .stdin(std::process::Stdio::inherit())
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
