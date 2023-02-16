@@ -204,7 +204,7 @@ pub(crate) fn delpri(
 
     if config.verbose > 0 {
         println!("{item} {}", todo.get(item));
-        println!("TODO: {item} deprioritized.")
+        println!("TODO: {item} deprioritized.");
     }
 
     Ok(())
@@ -236,7 +236,7 @@ pub(crate) fn done(
 
     if config.verbose > 0 {
         println!("{item} {task}");
-        println!("TODO: {item} marked as done.")
+        println!("TODO: {item} marked as done.");
     }
 
     Ok(())
