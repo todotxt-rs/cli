@@ -23,9 +23,8 @@ fn main() -> Result {
     use envir::Serialize;
     use opts::Command::*;
 
-    let mut opt = match Opt::try_parse() {
-        Ok(opt) => opt,
-        Err(_) => return help(&Config::from_env()),
+    let Ok(mut opt) = Opt::try_parse() else {
+        return help(&Config::from_env());
     };
 
     let config = Config::from_opt(&opt);

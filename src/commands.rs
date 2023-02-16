@@ -437,9 +437,8 @@ fn filter_hidden(task: &crate::Task) -> bool {
 }
 
 fn filter_term(s: &str, crate::opts::Filter { term }: &crate::opts::Filter) -> bool {
-    let terms = match term {
-        Some(terms) => terms,
-        None => return true,
+    let Some(terms) = term else {
+        return true;
     };
 
     let mut accept = false;
@@ -673,12 +672,9 @@ pub(crate) fn note_edit(
 
     let list = crate::List::from(&config.todo_file)?;
 
-    let filename = match &list.get(item).note {
-        todo_txt::task::Note::Long { filename, .. } => filename,
-        _ => {
-            println!("TODO: Task {item} has no note.");
-            return Ok(());
-        }
+    let todo_txt::task::Note::Long { filename, .. } = &list.get(item).note else {
+        println!("TODO: Task {item} has no note.");
+        return Ok(());
     };
 
     std::process::Command::new(editor)
