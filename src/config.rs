@@ -112,6 +112,7 @@ impl Config {
         config
     }
 
+    #[must_use]
     pub fn from_env() -> Self {
         Self::load_env();
 

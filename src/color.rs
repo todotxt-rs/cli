@@ -7,6 +7,7 @@ pub enum Color {
 }
 
 impl Color {
+    #[must_use]
     pub fn colorize(&self, s: &str) -> String {
         use colored::Colorize;
 

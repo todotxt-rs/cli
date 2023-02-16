@@ -59,10 +59,12 @@ impl List {
         Ok(())
     }
 
+    #[must_use]
     pub fn len(&self) -> usize {
         self.tasks.len()
     }
 
+    #[must_use]
     pub fn get(&self, index: &usize) -> &crate::Task {
         &self.tasks[*index - 1]
     }
