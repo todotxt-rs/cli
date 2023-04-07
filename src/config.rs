@@ -98,6 +98,7 @@ pub struct Config {
 }
 
 impl Config {
+    #[allow(dead_code)]
     pub(crate) fn from_opt(opt: &crate::Opt) -> Self {
         let mut config = Self::from_env();
 
