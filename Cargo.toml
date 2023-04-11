@@ -10,13 +10,17 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-chrono = "0.4"
 colored = "2.0"
 dotenvy = "0.15"
 exec = "0.3"
 regex = "1.5"
 thiserror = "1.0"
 todo-txt = "3.0"
+
+[dependencies.chrono]
+version = "0.4"
+default-features = false
+features = ["std"]
 
 [dependencies.envir]
 version = "0.1"
