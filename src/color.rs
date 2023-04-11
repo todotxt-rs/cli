@@ -1,6 +1,6 @@
 #[derive(Clone, Debug, Default)]
 pub enum Color {
-    Colored(colored::Color),
+    Colored(owo_colors::AnsiColors),
     #[default]
     None,
     Raw(String),
@@ -9,17 +9,13 @@ pub enum Color {
 impl Color {
     #[must_use]
     pub fn colorize(&self, s: &str) -> String {
-        use colored::Colorize;
+        use owo_colors::OwoColorize;
 
-        if !colored::control::SHOULD_COLORIZE.should_colorize() {
-            return s.to_string();
-        }
-
-        match self {
-            Self::Colored(color) => s.color(*color).to_string(),
-            Self::None => s.to_string(),
-            Self::Raw(color) => format!("{color}{s}\x1B[0m"),
-        }
+        s.if_supports_color(owo_colors::Stream::Stdout, |text| match self {
+            Self::Colored(color) => text.color(*color).to_string(),
+            Self::None => text.to_string(),
+            Self::Raw(color) => format!("{color}{text}\x1B[0m"),
+        }).to_string()
     }
 }
 
@@ -33,8 +29,10 @@ impl std::str::FromStr for Color {
     type Err = crate::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let color = if let Ok(color) = s.parse() {
-            Self::Colored(color)
+        let ansi_color = s.into();
+
+        let color = if ansi_color != owo_colors::AnsiColors::White {
+            Self::Colored(ansi_color)
         } else {
             Self::Raw(s.replace("\\\\033", "\x1B"))
         };
@@ -46,7 +44,7 @@ impl std::str::FromStr for Color {
 impl ToString for Color {
     fn to_string(&self) -> String {
         match self {
-            Self::Colored(color) => color.to_bg_str().to_string(),
+            Self::Colored(color) => format!("{color:?}").to_lowercase(),
             Self::None => String::new(),
             Self::Raw(color) => color.clone(),
         }

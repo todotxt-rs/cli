@@ -10,7 +10,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-colored = "2.0"
 dotenvy = "0.15"
 exec = "0.3"
 regex = "1.5"
@@ -29,6 +28,10 @@ features = ["extrapolation"]
 [dependencies.clap]
 version = "4.0"
 features = ["derive"]
+
+[dependencies.owo-colors]
+version = "3.5"
+features = ["supports-colors"]
 
 [dev-dependencies]
 assert_cmd = "2.0"
