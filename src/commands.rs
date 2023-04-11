@@ -668,7 +668,7 @@ pub(crate) fn note_edit(
     config: &crate::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
-    let editor = std::env::var("EDITOR").map_err(|_| crate::Error::Env("EDITOR".to_string()))?;
+    let editor = envir::get("EDITOR")?;
 
     let list = crate::List::from(&config.todo_file)?;
 

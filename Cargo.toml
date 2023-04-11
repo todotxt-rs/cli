@@ -22,8 +22,8 @@ default-features = false
 features = ["std"]
 
 [dependencies.envir]
-version = "0.1"
-features = ["extrapolation"]
+version = "0.2"
+features = ["extrapolation", "serde"]
 
 [dependencies.clap]
 version = "4.0"

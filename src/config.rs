@@ -121,31 +121,31 @@ impl Config {
     }
 
     pub fn load_env() {
-        std::env::set_var("NONE", "");
-        std::env::set_var("BLACK", "\x1B[0;30m");
-        std::env::set_var("RED", "\x1B[0;31m");
-        std::env::set_var("GREEN", "\x1B[0;32m");
-        std::env::set_var("BROWN", "\x1B[0;33m");
-        std::env::set_var("BLUE", "\x1B[0;34m");
-        std::env::set_var("PURPLE", "\x1B[0;35m");
-        std::env::set_var("CYAN", "\x1B[0;36m");
-        std::env::set_var("LIGHT_GREY", "\x1B[0;37m");
-        std::env::set_var("DARK_GREY", "\x1B[1;30m");
-        std::env::set_var("LIGHT_RED", "\x1B[1;31m");
-        std::env::set_var("LIGHT_GREEN", "\x1B[1;32m");
-        std::env::set_var("YELLOW", "\x1B[1;33m");
-        std::env::set_var("LIGHT_BLUE", "\x1B[1;3");
-        std::env::set_var("LIGHT_PURPLE", "\x1B[1;35m");
-        std::env::set_var("LIGHT_CYAN", "\x1B[1;36m");
-        std::env::set_var("WHITE", "\x1B[1;37m");
-        std::env::set_var("DEFAULT", "\x1B[0m");
+        envir::set("NONE", "");
+        envir::set("BLACK", "\x1B[0;30m");
+        envir::set("RED", "\x1B[0;31m");
+        envir::set("GREEN", "\x1B[0;32m");
+        envir::set("BROWN", "\x1B[0;33m");
+        envir::set("BLUE", "\x1B[0;34m");
+        envir::set("PURPLE", "\x1B[0;35m");
+        envir::set("CYAN", "\x1B[0;36m");
+        envir::set("LIGHT_GREY", "\x1B[0;37m");
+        envir::set("DARK_GREY", "\x1B[1;30m");
+        envir::set("LIGHT_RED", "\x1B[1;31m");
+        envir::set("LIGHT_GREEN", "\x1B[1;32m");
+        envir::set("YELLOW", "\x1B[1;33m");
+        envir::set("LIGHT_BLUE", "\x1B[1;3");
+        envir::set("LIGHT_PURPLE", "\x1B[1;35m");
+        envir::set("LIGHT_CYAN", "\x1B[1;36m");
+        envir::set("WHITE", "\x1B[1;37m");
+        envir::set("DEFAULT", "\x1B[0m");
 
         Self::load_config_file();
     }
 
     #[cfg(not(debug_assertions))]
     fn load_config_file() {
-        let home = std::env::var("HOME").unwrap();
+        let home = envir::get("HOME").unwrap();
 
         let configs: Vec<Box<dyn Fn() -> String>> = vec![
             Box::new(|| format!("{home}/.todo/config")),
@@ -160,7 +160,7 @@ impl Config {
                 format!("{}/todo.cfg", path.display())
             }),
             Box::new(|| {
-                std::env::var("TODOTXT_GLOBAL_CFG_FILE")
+                envir::get("TODOTXT_GLOBAL_CFG_FILE")
                     .unwrap_or_else(|_| "/etc/todo/config".to_string())
             }),
         ];
