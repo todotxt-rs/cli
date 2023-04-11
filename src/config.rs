@@ -166,7 +166,7 @@ impl Config {
         ];
 
         for config in configs {
-            if dotenv::from_path(config()).is_ok() {
+            if dotenvy::from_path(config()).is_ok() {
                 break;
             }
         }
@@ -174,6 +174,6 @@ impl Config {
 
     #[cfg(debug_assertions)]
     fn load_config_file() {
-        dotenv::dotenv().ok();
+        dotenvy::dotenv().ok();
     }
 }
