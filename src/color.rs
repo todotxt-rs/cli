@@ -15,7 +15,8 @@ impl Color {
             Self::Colored(color) => text.color(*color).to_string(),
             Self::None => text.to_string(),
             Self::Raw(color) => format!("{color}{text}\x1B[0m"),
-        }).to_string()
+        })
+        .to_string()
     }
 }
 
