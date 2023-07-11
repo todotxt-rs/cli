@@ -559,7 +559,7 @@ macro_rules! list_tag {
 
         let mut tags = todo
             .iter()
-            .map(|x| x.$ty.clone())
+            .map(|x| x.$ty().clone())
             .flatten()
             .collect::<Vec<_>>();
 
