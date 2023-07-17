@@ -489,12 +489,12 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
 
     #[cfg(feature = "extended")]
     if task.flagged {
-        output.push_str("🚩 ");
+        output.push_str(" ");
     }
 
     #[cfg(feature = "extended")]
     if task.has_note() {
-        output.push_str("📓 ");
+        output.push_str(" ");
     }
 
     let regex = regex::Regex::new(r#"(?P<number>[0-9]+)"#).unwrap();
