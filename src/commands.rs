@@ -502,7 +502,7 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
         config.colors.number.colorize(&caps["number"])
     });
 
-    let regex = regex::Regex::new(r#"(?P<label>(?P<type>\+|@)[^ ]+)"#).unwrap();
+    let regex = regex::Regex::new(r"(?P<label>(?P<type>\+|@)[^ ]+)").unwrap();
     let subject = regex.replace_all(&subject, |caps: &regex::Captures| {
         let color = match &caps["type"] {
             "+" => config.colors.project.clone(),
