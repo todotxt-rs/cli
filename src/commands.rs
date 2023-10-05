@@ -353,8 +353,7 @@ where
     let list = crate::List::from(file)?;
     let total = list.len();
 
-    // @FIXME feature(int_log)
-    let width = (total as f32).log10() as usize + 1;
+    let width = total.ilog10() as usize + 1;
 
     let tasks = list
         .iter()
