@@ -182,6 +182,7 @@ pub(crate) enum Command {
     Report,
 
     #[command(external_subcommand)]
+    #[allow(dead_code)]
     External(Vec<String>),
 }
 

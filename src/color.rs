@@ -42,6 +42,7 @@ impl std::str::FromStr for Color {
     }
 }
 
+#[allow(clippy::to_string_trait_impl)]
 impl ToString for Color {
     fn to_string(&self) -> String {
         match self {
