@@ -153,7 +153,7 @@ fn flag() {
     let result = reexec(result.todo_dir, "flag", &[]);
     assert_eq!(
         result.stdout,
-        "1 🚩 new task 1\n--\nTODO: 1 of 1 tasks show\n"
+        "1  new task 1\n--\nTODO: 1 of 1 tasks show\n"
     );
 }
 
