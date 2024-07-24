@@ -22,7 +22,7 @@ default-features = false
 features = ["std"]
 
 [dependencies.envir]
-version = "0.3"
+version = "0.4"
 default-features = false
 features = ["extrapolation", "serde"]
 
