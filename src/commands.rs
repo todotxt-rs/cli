@@ -691,6 +691,7 @@ pub(crate) fn note_show(
     let list = crate::List::from(&config.todo_file)?;
 
     if let Some(note) = list.get(item).note.content() {
+        let note = exec(&config.note_filter, note)?;
         print!("{note}");
     } else {
         println!("TODO: Task {item} has no note.");

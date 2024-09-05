@@ -78,6 +78,8 @@ pub struct Config {
     pub note_archive: String,
     #[envir(noprefix, name = "TODO_NOTES_DIR", default = "${TODO_DIR}/notes")]
     pub notes_dir: String,
+    #[envir(noprefix, name = "TODO_NOTE_FILTER", default = "cat")]
+    pub note_filter: String,
     #[envir(default)]
     pub plain: bool,
     #[envir(default = "true")]
