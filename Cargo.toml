@@ -13,7 +13,7 @@ anyhow = "1.0"
 dotenvy = "0.15"
 exec = "0.3"
 regex = "1.5"
-thiserror = "1.0"
+thiserror = "2.0"
 todo-txt = "3.1"
 
 [dependencies.chrono]
