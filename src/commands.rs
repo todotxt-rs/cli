@@ -496,13 +496,15 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
         output.push_str(" ");
     }
 
-    let regex = regex::Regex::new(r#"(?P<number>[0-9]+)"#).unwrap();
-    let subject = regex.replace_all(&task.subject, |caps: &regex::Captures| {
+    static NUMBER_REGEX: std::sync::LazyLock<regex::Regex> =
+        std::sync::LazyLock::new(|| regex::Regex::new(r#"(?P<number>[0-9]+)"#).unwrap());
+    let subject = NUMBER_REGEX.replace_all(&task.subject, |caps: &regex::Captures| {
         config.colors.number.colorize(&caps["number"])
     });
 
-    let regex = regex::Regex::new(r"(?P<label>(?P<type>\+|@)[^ ]+)").unwrap();
-    let subject = regex.replace_all(&subject, |caps: &regex::Captures| {
+    static TAG_REGEX: std::sync::LazyLock<regex::Regex> =
+        std::sync::LazyLock::new(|| regex::Regex::new(r"(?P<label>(?P<type>\+|@)[^ ]+)").unwrap());
+    let subject = TAG_REGEX.replace_all(&subject, |caps: &regex::Captures| {
         let color = match &caps["type"] {
             "+" => config.colors.project.clone(),
             "@" => config.colors.context.clone(),
@@ -512,11 +514,11 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
         color.colorize(&caps["label"])
     });
 
-    let regex = regex::Regex::new(
-        r#"(?P<date>(19|20)[0-9][0-9]-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))"#,
-    )
-    .unwrap();
-    let subject = regex.replace_all(&subject, |caps: &regex::Captures| {
+    static DATE_REGEX: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+        regex::Regex::new(r#"(?P<date>(19|20)[0-9][0-9]-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01]))"#)
+            .unwrap()
+    });
+    let subject = DATE_REGEX.replace_all(&subject, |caps: &regex::Captures| {
         config.colors.date.colorize(&caps["date"])
     });
 
