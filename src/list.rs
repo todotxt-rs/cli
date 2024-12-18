@@ -1,106 +1,45 @@
 use anyhow::Context;
 
-#[derive(Clone, Debug, Default)]
 pub struct List {
     filename: String,
-    tasks: Vec<crate::Task>,
+    inner: todo_txt::task::List<crate::Task>,
 }
 
 impl List {
-    pub fn from(filename: &str) -> crate::Result<Self> {
-        use std::io::Read;
-
+    pub fn from(filename: &str) -> crate::Result<crate::List> {
         if !std::path::Path::new(filename).exists() {
             std::fs::File::create(filename)
                 .with_context(|| format!("Failed to create '{filename}' file"))?;
         }
 
-        let mut file = std::fs::File::open(filename)
-            .with_context(|| format!("Failed to open '{filename}' file"))?;
-
-        let mut content = String::new();
-        file.read_to_string(&mut content)
+        let contents = std::fs::read_to_string(filename)
             .with_context(|| format!("Failed to read '{filename}' file"))?;
+
 
         let list = Self {
             filename: filename.to_string(),
-            tasks: Self::load(&content)
-                .with_context(|| format!("Load task list from {filename}"))?,
+            inner: todo_txt::task::List::from(&contents),
         };
 
         Ok(list)
     }
 
-    fn load(content: &str) -> crate::Result<Vec<crate::Task>> {
-        let mut tasks = Vec::new();
-
-        for line in content.lines() {
-            if line.is_empty() {
-                continue;
-            }
-
-            match line.parse() {
-                Ok(task) => tasks.push(task),
-                Err(_) => {
-                    return Err(anyhow::anyhow!(crate::Error::List(format!(
-                        "Invalid tasks: '{line}'"
-                    ))));
-                }
-            };
-        }
-
-        Ok(tasks)
-    }
-
-    pub fn save(&mut self) -> crate::Result {
-        std::fs::write(&self.filename, self.to_string().as_bytes())
-            .with_context(|| format!("Failed to save in '{}' file", self.filename))?;
-
-        Ok(())
-    }
-
-    #[must_use]
-    pub fn len(&self) -> usize {
-        self.tasks.len()
-    }
-
-    #[must_use]
-    pub fn get(&self, index: &usize) -> &crate::Task {
-        &self.tasks[*index - 1]
-    }
-
-    pub fn get_mut(&mut self, index: &usize) -> &mut crate::Task {
-        &mut self.tasks[*index - 1]
-    }
-
-    pub fn remove(&mut self, index: usize) -> crate::Task {
-        self.tasks.remove(index - 1)
-    }
-
-    pub fn push(&mut self, task: crate::Task) {
-        self.tasks.push(task);
-    }
-
-    pub fn iter(&self) -> std::slice::Iter<'_, crate::Task> {
-        self.tasks.iter()
-    }
-
-    pub fn dedup(&mut self) {
-        self.tasks.sort();
-        self.tasks.dedup();
+    pub fn save(&self) -> crate::Result {
+        std::fs::write(&self.filename, self.inner.to_string().as_bytes())
+            .with_context(|| format!("Failed to save in '{}' file", self.filename))
     }
 }
 
-impl ToString for List {
-    fn to_string(&self) -> String {
-        use std::fmt::Write as _;
+impl std::ops::Deref for List {
+    type Target = todo_txt::task::List<crate::Task>;
 
-        let mut s = String::new();
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
 
-        for task in &self.tasks {
-            writeln!(s, "{task}").ok();
-        }
-
-        s
+impl std::ops::DerefMut for List {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.inner
     }
 }

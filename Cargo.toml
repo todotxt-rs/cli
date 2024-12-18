@@ -14,7 +14,6 @@ dotenvy = "0.15"
 exec = "0.3"
 regex = "1.5"
 thiserror = "2.0"
-todo-txt = "3.1"
 
 [dependencies.chrono]
 version = "0.4"
@@ -24,15 +23,15 @@ features = ["std"]
 [dependencies.envir]
 version = "1.0"
 default-features = false
-features = ["extrapolation", "serde"]
+features = ["serde"]
 
 [dependencies.clap]
 version = "4.0"
 features = ["derive"]
 
-[dependencies.owo-colors]
+[dependencies.todo-txt]
 version = "4.0"
-features = ["supports-colors"]
+features = ["config"]
 
 [dev-dependencies]
 assert_cmd = "2.0"

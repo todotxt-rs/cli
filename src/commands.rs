@@ -18,16 +18,16 @@ impl std::fmt::Display for Summary {
     }
 }
 
-pub(crate) fn add(config: &crate::Config, add: &crate::opts::Add) -> crate::Result {
+pub(crate) fn add(config: &todo_txt::Config, add: &crate::opts::Add) -> crate::Result {
     add_tasks(config, &config.todo_file, add)
 }
 
-pub(crate) fn addm(config: &crate::Config, add: &crate::opts::Add) -> crate::Result {
+pub(crate) fn addm(config: &todo_txt::Config, add: &crate::opts::Add) -> crate::Result {
     add_tasks(config, &config.todo_file, add)
 }
 
 pub(crate) fn addto(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::AddTo { dest, add }: &crate::opts::AddTo,
 ) -> crate::Result {
     let file = format!("{}/{dest}", config.todo_dir);
@@ -36,7 +36,7 @@ pub(crate) fn addto(
 }
 
 fn add_tasks(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     dest: &str,
     crate::opts::Add { task }: &crate::opts::Add,
 ) -> crate::Result {
@@ -76,7 +76,7 @@ fn add_tasks(
 }
 
 pub(crate) fn append(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Append { item, add }: &crate::opts::Append,
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
@@ -98,7 +98,7 @@ pub(crate) fn append(
     Ok(())
 }
 
-pub(crate) fn archive(config: &crate::Config) -> crate::Result {
+pub(crate) fn archive(config: &todo_txt::Config) -> crate::Result {
     let mut todo = crate::List::from(&config.todo_file)?;
     let mut done = crate::List::from(&config.done_file)?;
 
@@ -128,12 +128,12 @@ pub(crate) fn archive(config: &crate::Config) -> crate::Result {
 }
 
 #[cfg(not(feature = "extended"))]
-fn archive_note(_: &crate::Config, _: &mut crate::Task) -> crate::Result {
+fn archive_note(_: &todo_txt::Config, _: &mut crate::Task) -> crate::Result {
     Ok(())
 }
 
 #[cfg(feature = "extended")]
-fn archive_note(config: &crate::Config, task: &mut crate::Task) -> crate::Result {
+fn archive_note(config: &todo_txt::Config, task: &mut crate::Task) -> crate::Result {
     if let Some(note) = task.note.content() {
         use std::io::Write;
 
@@ -149,10 +149,11 @@ fn archive_note(config: &crate::Config, task: &mut crate::Task) -> crate::Result
     Ok(())
 }
 
-pub(crate) fn deduplicate(config: &crate::Config) -> crate::Result {
+pub(crate) fn deduplicate(config: &todo_txt::Config) -> crate::Result {
     let mut todo = crate::List::from(&config.todo_file)?;
     let original_task_num = todo.len();
 
+    todo.sort();
     todo.dedup();
     todo.save()?;
 
@@ -168,7 +169,7 @@ pub(crate) fn deduplicate(config: &crate::Config) -> crate::Result {
 }
 
 pub(crate) fn del(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Del { item, filter }: &crate::opts::Del,
 ) -> crate::Result {
     if filter.term.is_none() {
@@ -194,7 +195,7 @@ pub(crate) fn del(
 }
 
 pub(crate) fn delpri(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
     let mut todo = crate::List::from(&config.todo_file)?;
@@ -211,7 +212,7 @@ pub(crate) fn delpri(
 }
 
 pub(crate) fn done(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
     let mut todo = crate::List::from(&config.todo_file)?;
@@ -243,10 +244,10 @@ pub(crate) fn done(
 }
 
 #[cfg(not(feature = "extended"))]
-fn recurrence(_: &crate::Config, _: &mut crate::List, _: &crate::Task) {}
+fn recurrence(_: &todo_txt::Config, _: &mut crate::List, _: &crate::Task) {}
 
 #[cfg(feature = "extended")]
-fn recurrence(config: &crate::Config, todo: &mut crate::List, task: &crate::Task) {
+fn recurrence(config: &todo_txt::Config, todo: &mut crate::List, task: &crate::Task) {
     if let Some(ref recurrence) = task.recurrence {
         let due = if recurrence.strict && task.due_date.is_some() {
             task.due_date.unwrap()
@@ -269,7 +270,7 @@ fn recurrence(config: &crate::Config, todo: &mut crate::List, task: &crate::Task
     }
 }
 
-pub(crate) fn flag(config: &crate::Config, item: usize) -> crate::Result {
+pub(crate) fn flag(config: &todo_txt::Config, item: usize) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
     let task = list.get_mut(&item);
     task.flagged = true;
@@ -277,7 +278,7 @@ pub(crate) fn flag(config: &crate::Config, item: usize) -> crate::Result {
     list.save()
 }
 
-pub(crate) fn listflag(config: &crate::Config) -> crate::Result {
+pub(crate) fn listflag(config: &todo_txt::Config) -> crate::Result {
     let summary = print_list(config, true, &config.todo_file, |(_, x)| x.flagged)?;
 
     print_summary(&[summary]);
@@ -285,7 +286,7 @@ pub(crate) fn listflag(config: &crate::Config) -> crate::Result {
     Ok(())
 }
 
-pub(crate) fn list(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
+pub(crate) fn list(config: &todo_txt::Config, filter: &crate::opts::Filter) -> crate::Result {
     let now = todo_txt::date::today();
 
     let summary = print_list(config, true, &config.todo_file, |(_, x)| {
@@ -300,7 +301,7 @@ pub(crate) fn list(config: &crate::Config, filter: &crate::opts::Filter) -> crat
     Ok(())
 }
 
-pub(crate) fn listall(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
+pub(crate) fn listall(config: &todo_txt::Config, filter: &crate::opts::Filter) -> crate::Result {
     let summary = vec![
         print_list(config, true, &config.todo_file, |(_, x)| {
             filter_term(&x.subject, filter)
@@ -315,7 +316,7 @@ pub(crate) fn listall(config: &crate::Config, filter: &crate::opts::Filter) -> c
     Ok(())
 }
 
-pub(crate) fn listaddons(config: &crate::Config) -> crate::Result {
+pub(crate) fn listaddons(config: &todo_txt::Config) -> crate::Result {
     let mut entries = std::fs::read_dir(&config.action_dir)?
         .map(|x| x.map(|e| e.file_name().to_string_lossy().to_string()))
         .collect::<Result<Vec<_>, std::io::Error>>()?;
@@ -328,7 +329,7 @@ pub(crate) fn listaddons(config: &crate::Config) -> crate::Result {
 }
 
 pub(crate) fn listfile(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::ListFile { src, filter }: &crate::opts::ListFile,
 ) -> crate::Result {
     let file = format!("{}/{}", config.todo_dir, src);
@@ -342,7 +343,7 @@ pub(crate) fn listfile(
 }
 
 fn print_list<P>(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     with_id: bool,
     file: &str,
     predicate: P,
@@ -457,7 +458,7 @@ fn filter_term(s: &str, crate::opts::Filter { term }: &crate::opts::Filter) -> b
     accept
 }
 
-fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)) -> String {
+fn print(config: &todo_txt::Config, width: usize, (id, task): (usize, &crate::Task)) -> String {
     let mut output = format!("{id:0width$} ");
 
     if task.finished {
@@ -508,7 +509,7 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
         let color = match &caps["type"] {
             "+" => config.colors.project.clone(),
             "@" => config.colors.context.clone(),
-            _ => crate::Color::None,
+            _ => config.colors.none.clone(),
         };
 
         color.colorize(&caps["label"])
@@ -560,7 +561,7 @@ macro_rules! list_tag {
 
         let mut tags = todo
             .iter()
-            .map(|x| x.$ty().clone())
+            .map(|x| x.$ty.clone())
             .flatten()
             .collect::<Vec<_>>();
 
@@ -576,12 +577,12 @@ macro_rules! list_tag {
     }};
 }
 
-pub(crate) fn listcon(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
+pub(crate) fn listcon(config: &todo_txt::Config, filter: &crate::opts::Filter) -> crate::Result {
     list_tag!(contexts, config, filter)
 }
 
 pub(crate) fn listpri(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::ListPri { priority, filter }: &crate::opts::ListPri,
 ) -> crate::Result {
     let summary = print_list(config, true, &config.todo_file, |(_, x)| {
@@ -601,12 +602,12 @@ pub(crate) fn listpri(
     Ok(())
 }
 
-pub(crate) fn listproj(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
+pub(crate) fn listproj(config: &todo_txt::Config, filter: &crate::opts::Filter) -> crate::Result {
     list_tag!(projects, config, filter)
 }
 
 pub(crate) fn r#move(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Move { item, dest, src }: &crate::opts::Move,
 ) -> crate::Result {
     if !confirm(config, &format!("Move {item} form {src} to {dest}"))? {
@@ -633,7 +634,7 @@ pub(crate) fn r#move(
 }
 
 #[cfg(feature = "extended")]
-pub(crate) fn note(config: &crate::Config, subcommand: &crate::opts::Note) -> crate::Result {
+pub(crate) fn note(config: &todo_txt::Config, subcommand: &crate::opts::Note) -> crate::Result {
     match subcommand {
         crate::opts::Note::Add(item) => note_add(config, item),
         crate::opts::Note::Archive => note_archive(config),
@@ -644,7 +645,7 @@ pub(crate) fn note(config: &crate::Config, subcommand: &crate::opts::Note) -> cr
 
 #[cfg(feature = "extended")]
 pub(crate) fn note_add(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
@@ -666,7 +667,7 @@ pub(crate) fn note_add(
 
 #[cfg(feature = "extended")]
 pub(crate) fn note_edit(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
     let editor = envir::get("EDITOR")?;
@@ -687,7 +688,7 @@ pub(crate) fn note_edit(
 
 #[cfg(feature = "extended")]
 pub(crate) fn note_show(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Item { item }: &crate::opts::Item,
 ) -> crate::Result {
     let list = crate::List::from(&config.todo_file)?;
@@ -703,7 +704,7 @@ pub(crate) fn note_show(
 }
 
 #[cfg(feature = "extended")]
-pub(crate) fn note_archive(config: &crate::Config) -> crate::Result {
+pub(crate) fn note_archive(config: &todo_txt::Config) -> crate::Result {
     println!(
         "{}",
         String::from_utf8_lossy(&std::fs::read(&config.note_archive)?)
@@ -713,7 +714,7 @@ pub(crate) fn note_archive(config: &crate::Config) -> crate::Result {
 }
 
 pub(crate) fn prepend(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Append { item, add }: &crate::opts::Append,
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
@@ -740,7 +741,7 @@ pub(crate) fn prepend(
 }
 
 pub(crate) fn pri(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Pri { item, priority }: &crate::opts::Pri,
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
@@ -770,7 +771,7 @@ pub(crate) fn pri(
 }
 
 pub(crate) fn replace(
-    config: &crate::Config,
+    config: &todo_txt::Config,
     crate::opts::Replace { item, text }: &crate::opts::Replace,
 ) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
@@ -796,7 +797,7 @@ pub(crate) fn replace(
     Ok(())
 }
 
-pub(crate) fn report(config: &crate::Config) -> crate::Result {
+pub(crate) fn report(config: &todo_txt::Config) -> crate::Result {
     use std::io::Write;
 
     let todo = crate::List::from(&config.todo_file)?;
@@ -818,7 +819,7 @@ pub(crate) fn report(config: &crate::Config) -> crate::Result {
     Ok(())
 }
 
-pub(crate) fn external(config: &crate::Config, args: &[String]) -> crate::Result {
+pub(crate) fn external(config: &todo_txt::Config, args: &[String]) -> crate::Result {
     use anyhow::Context;
 
     let command = format!("{}/{}", config.action_dir, args[0]);
@@ -834,11 +835,11 @@ pub(crate) fn external(config: &crate::Config, args: &[String]) -> crate::Result
     Ok(())
 }
 
-fn confirm(config: &crate::Config, question: &str) -> crate::Result<bool> {
+fn confirm(config: &todo_txt::Config, question: &str) -> crate::Result<bool> {
     ask(config, &format!("{question}: (y/n)")).map(|x| x == "y\n" || (config.force && x.is_empty()))
 }
 
-fn ask(config: &crate::Config, question: &str) -> crate::Result<String> {
+fn ask(config: &todo_txt::Config, question: &str) -> crate::Result<String> {
     use std::io::Write;
 
     if config.force {

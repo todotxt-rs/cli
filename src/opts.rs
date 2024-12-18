@@ -43,6 +43,22 @@ pub(crate) struct Opt {
     pub disable_final_filter: bool,
 }
 
+impl From<&Opt> for todo_txt::Config {
+    fn from(value: &Opt) -> Self {
+        let mut config = todo_txt::Config::from_env();
+
+        config.auto_archive |= !value.dont_auto_archive;
+        config.date_on_add |= value.append_current_date;
+        config.disable_filter |= value.disable_final_filter;
+        config.force |= value.force;
+        config.plain |= value.plain_text;
+        config.preserve_line_numbers |= !value.dont_preserve_line_numbers;
+        config.verbose |= value.verbose;
+
+        config
+    }
+}
+
 #[derive(clap::Subcommand)]
 #[clap(disable_help_subcommand = true)]
 pub(crate) enum Command {
