@@ -15,7 +15,6 @@ impl List {
         let contents = std::fs::read_to_string(filename)
             .with_context(|| format!("Failed to read '{filename}' file"))?;
 
-
         let list = Self {
             filename: filename.to_string(),
             inner: todo_txt::task::List::from(&contents),
