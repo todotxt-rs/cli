@@ -5,7 +5,7 @@ authors = ["Sanpi <sanpi@homecomputing.fr>"]
 description = "Cli for the todo.txt format"
 license = "MIT"
 keywords = ["todotxt"]
-repository = "https://github.com/sanpii/todo-txt"
+repository = "https://github.com/todotxt-rs/cli"
 edition = "2021"
 
 [dependencies]
