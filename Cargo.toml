@@ -6,7 +6,7 @@ description = "Cli for the todo.txt format"
 license = "MIT"
 keywords = ["todotxt"]
 repository = "https://github.com/todotxt-rs/cli"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
