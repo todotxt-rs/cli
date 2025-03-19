@@ -108,6 +108,10 @@ pub(crate) enum Command {
     #[command(alias = "do")]
     Done(Item),
 
+    /// Prints the configuration for reuse it in a script.
+    #[cfg(feature = "extended")]
+    Env,
+
     /// List or flag task ITEM#.
     #[cfg(feature = "extended")]
     Flag(Flag),

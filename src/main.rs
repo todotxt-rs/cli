@@ -47,6 +47,8 @@ fn main() -> Result {
             Del(arg) => commands::del(&config, &arg),
             Delpri(arg) => commands::delpri(&config, &arg),
             Done(arg) => commands::done(&config, &arg),
+            #[cfg(feature = "extended")]
+            Env => commands::env(&config),
             Flag(arg) => {
                 if let Some(item) = arg.item {
                     commands::flag(&config, item)

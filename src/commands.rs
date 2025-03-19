@@ -270,6 +270,19 @@ fn recurrence(config: &todo_txt::Config, todo: &mut crate::List, task: &crate::T
     }
 }
 
+#[cfg(feature = "extended")]
+pub(crate) fn env(config: &todo_txt::Config) -> crate::Result {
+    use envir::Serialize as _;
+
+    let env = config.collect();
+
+    for (key, value) in env {
+        println!("export {key}='{value}'");
+    }
+
+    Ok(())
+}
+
 pub(crate) fn flag(config: &todo_txt::Config, item: usize) -> crate::Result {
     let mut list = crate::List::from(&config.todo_file)?;
     let task = list.get_mut(&item);
