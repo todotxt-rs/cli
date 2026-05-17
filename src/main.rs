@@ -2,10 +2,12 @@
 
 mod commands;
 mod errors;
+mod config;
 mod list;
 mod opts;
 
 use errors::*;
+use config::Config;
 use list::*;
 use opts::Opt;
 
@@ -20,7 +22,7 @@ fn main() -> Result {
     use opts::Command::*;
 
     let Ok(mut opt) = Opt::try_parse() else {
-        return help(&todo_txt::Config::from_env());
+        return help(&Config::from_env());
     };
 
     if opt.color {
@@ -31,7 +33,7 @@ fn main() -> Result {
         envir::set("NO_COLOR", true);
     }
 
-    let config = todo_txt::Config::from(&opt);
+    let config = Config::from(&opt);
 
     if opt.command.is_none() {
         let mut args = std::env::args_os().collect::<Vec<_>>();
@@ -86,7 +88,7 @@ fn main() -> Result {
     }
 }
 
-fn help(config: &todo_txt::Config) -> Result {
+fn help(config: &Config) -> Result {
     use clap::CommandFactory;
 
     let mut app = Opt::command();
