@@ -479,15 +479,11 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
     }
 
     if let Some(finish_date) = task.finish_date {
-        output.push_str(
-            &print_date(config, &finish_date)
-        );
+        output.push_str(&print_date(config, &finish_date));
     }
 
     if let Some(create_date) = task.create_date {
-        output.push_str(
-            &print_date(config, &create_date),
-        );
+        output.push_str(&print_date(config, &create_date));
     }
 
     if !task.priority.is_lowest() {
@@ -566,11 +562,10 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
 }
 
 fn print_date(config: &crate::Config, date: &todo_txt::Date) -> String {
-    let delta =  todo_txt::date::today() - *date;
+    let delta = todo_txt::date::today() - *date;
 
     let s = if config.reldate && delta.num_days().abs() <= config.reldate_dayrange as i64 {
-
-        match delta.num_days()  {
+        match delta.num_days() {
             0 => "today".to_string(),
             -1 => "yesterday".to_string(),
             1 => "tomorrow".to_string(),

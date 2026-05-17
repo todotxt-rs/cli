@@ -1,12 +1,10 @@
 #![warn(warnings)]
 
 mod commands;
-mod errors;
 mod config;
 mod list;
 mod opts;
 
-use errors::*;
 use config::Config;
 use list::*;
 use opts::Opt;
@@ -15,6 +13,8 @@ use opts::Opt;
 pub(crate) type Task = todo_txt::Task;
 #[cfg(feature = "extended")]
 pub(crate) type Task = todo_txt::task::Extended;
+
+pub type Result<T = ()> = anyhow::Result<T>;
 
 fn main() -> Result {
     use clap::Parser;
