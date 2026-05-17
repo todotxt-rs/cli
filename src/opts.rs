@@ -179,6 +179,12 @@ pub(crate) enum Command {
     #[command(alias = "p")]
     Pri(Pri),
 
+    /// Decreases the priority of the item number
+    Pridown(Item),
+
+    /// Increases the priority of the item number
+    Priup(Item),
+
     /// Replaces task on line ITEM# with UPDATED TODO.
     Replace(Replace),
 

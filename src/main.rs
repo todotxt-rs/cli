@@ -79,6 +79,8 @@ fn main() -> Result {
             Note(arg) => commands::note(&config, &arg),
             Prepend(arg) => commands::prepend(&config, &arg),
             Pri(arg) => commands::pri(&config, &arg),
+            Pridown(arg) => commands::pridown(&config, &arg),
+            Priup(arg) => commands::priup(&config, &arg),
             Replace(arg) => commands::replace(&config, &arg),
             Report => commands::report(&config),
             External(arg) => commands::external(&config, &arg),

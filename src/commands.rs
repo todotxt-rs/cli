@@ -799,6 +799,30 @@ pub(crate) fn pri(
     Ok(())
 }
 
+pub(crate) fn pridown(
+    config: &crate::Config,
+    crate::opts::Item { item }: &crate::opts::Item,
+) -> crate::Result {
+    let mut list = crate::List::from(&config.todo_file)?;
+
+    let task = list.get_mut(item);
+    task.priority -= 1;
+
+    list.save()
+}
+
+pub(crate) fn priup(
+    config: &crate::Config,
+    crate::opts::Item { item }: &crate::opts::Item,
+) -> crate::Result {
+    let mut list = crate::List::from(&config.todo_file)?;
+
+    let task = list.get_mut(item);
+    task.priority += 1;
+
+    list.save()
+}
+
 pub(crate) fn replace(
     config: &crate::Config,
     crate::opts::Replace { item, text }: &crate::opts::Replace,
