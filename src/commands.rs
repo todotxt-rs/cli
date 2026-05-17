@@ -57,10 +57,10 @@ fn add_tasks(
             todo.create_date = Some(today);
         }
 
-        if let Some(pri) = config.priority_on_add {
-            if todo.priority.is_lowest() {
-                todo.priority = pri.try_into().unwrap_or_default();
-            }
+        if let Some(pri) = config.priority_on_add
+            && todo.priority.is_lowest()
+        {
+            todo.priority = pri.try_into().unwrap_or_default();
         }
 
         list.push(todo);
@@ -249,8 +249,10 @@ fn recurrence(_: &crate::Config, _: &mut crate::List, _: &crate::Task) {}
 #[cfg(feature = "extended")]
 fn recurrence(config: &crate::Config, todo: &mut crate::List, task: &crate::Task) {
     if let Some(ref recurrence) = task.recurrence {
-        let due = if recurrence.strict && task.due_date.is_some() {
-            task.due_date.unwrap()
+        let due = if recurrence.strict
+            && let Some(due) = task.due_date
+        {
+            due
         } else {
             todo_txt::date::today()
         };
@@ -524,7 +526,7 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
     });
     let subject = DATE_REGEX.replace_all(&subject, |caps: &regex::Captures| {
         let date = &caps["date"].parse().unwrap();
-        print_date(&config, &date)
+        print_date(config, date)
     });
 
     output.push_str(&subject);
