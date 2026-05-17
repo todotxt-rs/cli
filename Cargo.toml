@@ -23,7 +23,7 @@ features = ["std"]
 [dependencies.envir]
 version = "1.0"
 default-features = false
-features = ["serde"]
+features = ["derive"]
 
 [dependencies.clap]
 version = "4.0"
