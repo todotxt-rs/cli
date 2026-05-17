@@ -23,6 +23,14 @@ fn main() -> Result {
         return help(&todo_txt::Config::from_env());
     };
 
+    if opt.color {
+        envir::set("FORCE_COLOR", true);
+    }
+
+    if opt.plain_text {
+        envir::set("NO_COLOR", true);
+    }
+
     let config = todo_txt::Config::from(&opt);
 
     if opt.command.is_none() {
