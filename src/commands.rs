@@ -571,8 +571,8 @@ fn print_date(config: &crate::Config, date: &todo_txt::Date) -> String {
     let s = if config.reldate && delta.num_days().abs() <= config.reldate_dayrange as i64 {
         match delta.num_days() {
             0 => "today".to_string(),
-            -1 => "yesterday".to_string(),
-            1 => "tomorrow".to_string(),
+            -1 => "tomorrow".to_string(),
+            1 => "yesterday".to_string(),
             7 => "1week".to_string(),
             num if num >= 730 => format!("{}years", num / 365),
             num if num >= 91 => format!("{}months", num / 30),
