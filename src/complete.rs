@@ -56,6 +56,41 @@ where
         .collect()
 }
 
+pub(crate) fn filter(current: &std::ffi::OsStr) -> Vec<clap_complete::CompletionCandidate> {
+    let current = current.to_str().unwrap_or_default();
+
+    let Some(last_item) = current.split(' ').next_back() else {
+        return Vec::new();
+    };
+
+    if let Some(project) = last_item.strip_prefix('+') {
+        tag(project, todo_txt::task::List::projects)
+    } else if let Some(context) = last_item.strip_prefix('@') {
+        tag(context, todo_txt::task::List::contexts)
+    } else {
+        Vec::new()
+    }
+}
+
+fn tag<F: Fn(&todo_txt::task::List<crate::Task>) -> Vec<String>>(
+    current: &str,
+    f: F,
+) -> Vec<clap_complete::CompletionCandidate> {
+    let config = crate::Config::from_env();
+    let todo = crate::List::from(&config.todo_file).unwrap();
+
+    f(&todo)
+        .iter()
+        .filter_map(|x| {
+            if x.starts_with(current) {
+                Some(clap_complete::CompletionCandidate::new(x))
+            } else {
+                None
+            }
+        })
+        .collect()
+}
+
 pub(crate) fn pri(current: &std::ffi::OsStr) -> Vec<clap_complete::CompletionCandidate> {
     if !current.is_empty() {
         return Vec::new();

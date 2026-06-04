@@ -240,6 +240,7 @@ pub(crate) struct Item {
 
 #[derive(clap::Parser)]
 pub(crate) struct Filter {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::filter))]
     pub term: Option<String>,
 }
 
