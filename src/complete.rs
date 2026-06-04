@@ -72,6 +72,20 @@ pub(crate) fn filter(current: &std::ffi::OsStr) -> Vec<clap_complete::Completion
     }
 }
 
+pub(crate) fn context(current: &std::ffi::OsStr) -> Vec<clap_complete::CompletionCandidate> {
+    tag(
+        current.to_str().unwrap_or_default(),
+        todo_txt::task::List::contexts,
+    )
+}
+
+pub(crate) fn project(current: &std::ffi::OsStr) -> Vec<clap_complete::CompletionCandidate> {
+    tag(
+        current.to_str().unwrap_or_default(),
+        todo_txt::task::List::projects,
+    )
+}
+
 fn tag<F: Fn(&todo_txt::task::List<crate::Task>) -> Vec<String>>(
     current: &str,
     f: F,

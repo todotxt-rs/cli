@@ -130,7 +130,10 @@ pub(crate) enum Command {
     ///
     /// If TERM specified, considers only tasks that contain TERM(s).
     #[command(alias = "lsc")]
-    Listcon(Filter),
+    Listcon {
+        #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::context))]
+        context: Option<String>,
+    },
 
     /// Displays all the lines in SRC file located in the todo.txt directory, sorted by priority
     /// with line numbers.
@@ -153,7 +156,10 @@ pub(crate) enum Command {
     ///
     /// If TERM specified, considers only tasks that contain TERM(s).
     #[command(alias = "lsprj")]
-    Listproj(Filter),
+    Listproj {
+        #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::project))]
+        project: Option<String>,
+    },
 
     /// Moves a line from source text file (SRC) to destination text file (DEST).
     ///

@@ -75,9 +75,9 @@ fn main() -> Result {
             Listall(arg) => commands::listall(&config, &arg),
             Listaddons => commands::listaddons(&config),
             Listfile(arg) => commands::listfile(&config, &arg),
-            Listcon(arg) => commands::listcon(&config, &arg),
+            Listcon { context } => commands::listcon(&config, context),
             Listpri(arg) => commands::listpri(&config, &arg),
-            Listproj(arg) => commands::listproj(&config, &arg),
+            Listproj { project } => commands::listproj(&config, project),
             Move(arg) => commands::r#move(&config, &arg),
             #[cfg(feature = "extended")]
             Note(arg) => commands::note(&config, &arg),

@@ -587,7 +587,7 @@ fn print_date(config: &crate::Config, date: &todo_txt::Date) -> String {
 }
 
 macro_rules! list_tag {
-    ($ty:ident, $config:ident, $filter:ident) => {{
+    ($ty:ident, $config:ident, $term:ident) => {{
         let todo = crate::List::from(&$config.todo_file)?;
 
         let mut tags = todo
@@ -598,8 +598,10 @@ macro_rules! list_tag {
 
         tags.dedup();
 
+        let filter = crate::opts::Filter { term: $term };
+
         for tag in tags {
-            if filter_term(&tag, $filter) {
+            if filter_term(&tag, &filter) {
                 println!("{tag}");
             }
         }
@@ -608,7 +610,7 @@ macro_rules! list_tag {
     }};
 }
 
-pub(crate) fn listcon(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
+pub(crate) fn listcon(config: &crate::Config, filter: Option<String>) -> crate::Result {
     list_tag!(contexts, config, filter)
 }
 
@@ -633,7 +635,7 @@ pub(crate) fn listpri(
     Ok(())
 }
 
-pub(crate) fn listproj(config: &crate::Config, filter: &crate::opts::Filter) -> crate::Result {
+pub(crate) fn listproj(config: &crate::Config, filter: Option<String>) -> crate::Result {
     list_tag!(projects, config, filter)
 }
 
