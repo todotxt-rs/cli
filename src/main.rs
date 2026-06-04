@@ -1,10 +1,12 @@
 #![warn(warnings)]
 
 mod commands;
+mod complete;
 mod config;
 mod list;
 mod opts;
 
+use clap::CommandFactory as _;
 use config::Config;
 use list::*;
 use opts::Opt;
@@ -17,9 +19,11 @@ pub(crate) type Task = todo_txt::task::Extended;
 pub type Result<T = ()> = anyhow::Result<T>;
 
 fn main() -> Result {
-    use clap::Parser;
-    use envir::Serialize;
+    use clap::Parser as _;
+    use envir::Serialize as _;
     use opts::Command::*;
+
+    clap_complete::CompleteEnv::with_factory(crate::Opt::command).complete();
 
     let Ok(mut opt) = Opt::try_parse() else {
         return help(&Config::from_env());
@@ -91,8 +95,6 @@ fn main() -> Result {
 }
 
 fn help(config: &Config) -> Result {
-    use clap::CommandFactory;
-
     let mut app = Opt::command();
     app.print_help()?;
 

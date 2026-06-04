@@ -12,7 +12,7 @@ pub(crate) struct Opt {
     #[arg(short)]
     pub color: bool,
     /// Use a configuration file other than one of the defaults
-    #[arg(short = 'd', default_value = "~/.todo/config")]
+    #[arg(short = 'd', default_value = "~/.todo/config", value_hint = clap::ValueHint::FilePath)]
     pub config_file: String,
     /// Forces actions without confirmation or interactive input
     #[arg(short = 'f')]
@@ -204,6 +204,7 @@ pub(crate) struct Add {
 
 #[derive(clap::Parser)]
 pub(crate) struct AddTo {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::todo_file))]
     pub dest: String,
     #[command(flatten)]
     pub add: Add,
@@ -211,6 +212,7 @@ pub(crate) struct AddTo {
 
 #[derive(clap::Parser)]
 pub(crate) struct Append {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: usize,
     #[command(flatten)]
     pub add: Add,
@@ -218,6 +220,7 @@ pub(crate) struct Append {
 
 #[derive(clap::Parser)]
 pub(crate) struct Del {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: usize,
     #[command(flatten)]
     pub filter: Filter,
@@ -225,11 +228,13 @@ pub(crate) struct Del {
 
 #[derive(clap::Parser)]
 pub(crate) struct Flag {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: Option<usize>,
 }
 
 #[derive(clap::Parser)]
 pub(crate) struct Item {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: usize,
 }
 
@@ -240,6 +245,7 @@ pub(crate) struct Filter {
 
 #[derive(clap::Parser)]
 pub(crate) struct ListFile {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::todo_file))]
     pub src: String,
     #[command(flatten)]
     pub filter: Filter,
@@ -247,6 +253,7 @@ pub(crate) struct ListFile {
 
 #[derive(clap::Parser)]
 pub(crate) struct ListPri {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::pri))]
     pub priority: Option<char>,
     #[command(flatten)]
     pub filter: Filter,
@@ -254,9 +261,11 @@ pub(crate) struct ListPri {
 
 #[derive(clap::Parser)]
 pub(crate) struct Move {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: usize,
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::todo_file))]
     pub dest: String,
-    #[arg(default_value = "todo.txt")]
+    #[arg(default_value = "todo.txt", add = clap_complete::engine::ArgValueCompleter::new(crate::complete::todo_file))]
     pub src: String,
 }
 
@@ -267,19 +276,28 @@ pub(crate) enum Note {
     #[command(alias = "a")]
     Add(Item),
     #[command(alias = "e")]
-    Edit(Item),
+    Edit {
+        #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::note))]
+        item: usize,
+    },
     #[command(alias = "s")]
-    Show(Item),
+    Show {
+        #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::note))]
+        item: usize,
+    },
 }
 
 #[derive(clap::Parser)]
 pub(crate) struct Pri {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: usize,
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::pri))]
     pub priority: char,
 }
 
 #[derive(clap::Parser)]
 pub(crate) struct Replace {
+    #[arg(add = clap_complete::engine::ArgValueCompleter::new(crate::complete::all_item))]
     pub item: usize,
     pub text: Option<String>,
 }

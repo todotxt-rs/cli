@@ -28,6 +28,10 @@ features = ["derive"]
 version = "4.0"
 features = ["derive"]
 
+[dependencies.clap_complete]
+version = "4.6"
+features = ["unstable-dynamic"]
+
 [dependencies.todo-txt]
 version = "4.0"
 features = ["config"]

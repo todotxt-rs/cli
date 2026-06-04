@@ -669,8 +669,8 @@ pub(crate) fn note(config: &crate::Config, subcommand: &crate::opts::Note) -> cr
     match subcommand {
         crate::opts::Note::Add(item) => note_add(config, item),
         crate::opts::Note::Archive => note_archive(config),
-        crate::opts::Note::Edit(item) => note_edit(config, item),
-        crate::opts::Note::Show(args) => note_show(config, args),
+        crate::opts::Note::Edit { item } => note_edit(config, item),
+        crate::opts::Note::Show { item } => note_show(config, item),
     }
 }
 
@@ -690,17 +690,14 @@ pub(crate) fn note_add(
     println!("TODO: Note added to task {item}");
 
     if !config.force && confirm(config, "Edit note?")? {
-        note_edit(config, &crate::opts::Item { item: *item })?;
+        note_edit(config, item)?;
     }
 
     Ok(())
 }
 
 #[cfg(feature = "extended")]
-pub(crate) fn note_edit(
-    config: &crate::Config,
-    crate::opts::Item { item }: &crate::opts::Item,
-) -> crate::Result {
+pub(crate) fn note_edit(config: &crate::Config, item: &usize) -> crate::Result {
     let editor = envir::get("EDITOR")?;
 
     let list = crate::List::from(&config.todo_file)?;
@@ -718,10 +715,7 @@ pub(crate) fn note_edit(
 }
 
 #[cfg(feature = "extended")]
-pub(crate) fn note_show(
-    config: &crate::Config,
-    crate::opts::Item { item }: &crate::opts::Item,
-) -> crate::Result {
+pub(crate) fn note_show(config: &crate::Config, item: &usize) -> crate::Result {
     let list = crate::List::from(&config.todo_file)?;
 
     if let Some(note) = list.get(item).note.content() {
