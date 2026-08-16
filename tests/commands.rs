@@ -186,7 +186,7 @@ fn order() {
 
     assert_eq!(
         stdout,
-        r#"1 (A) Make peace between Cylons and humans +PeaceProject
+        r"1 (A) Make peace between Cylons and humans +PeaceProject
 2 (B) Report to <i>Admiral Adama</i> about FTL @CIC +Galactica\Repairs due:2013-05-24
 4 (C) Upgrade jump drives with Cylon technology +Galactica\Repairs
 3 2016-12-08 Feed Schrodinger's Cat 5 times due:2014-02-23
@@ -200,7 +200,7 @@ fn order() {
 TODO: 9 of 9 tasks show
 DONE: 1 of 1 tasks show
 total: 10 of 10 tasks show
-"#
+"
     );
 }
 
@@ -227,7 +227,7 @@ fn color() {
     assert_eq!(
         stdout,
         format!(
-            r#"(yellow)1 (A) Make peace between Cylons and humans (red)+PeaceProject{reset}{reset}
+            r"(yellow)1 (A) Make peace between Cylons and humans (red)+PeaceProject{reset}{reset}
 (green)2 (B) Report to <i>Admiral Adama</i> about FTL (blue)@CIC{reset} (red)+Galactica\Repairs{reset}(cyan) due:{reset}(light blue)2013-05-24{reset}{reset}
 (blue)4 (C) Upgrade jump drives with Cylon technology (red)+Galactica\Repairs{reset}{reset}
 3 (light blue)2016-12-08{reset} Feed Schrodinger's Cat (light grey)5{reset} times(cyan) due:{reset}(light blue)2014-02-23{reset}
@@ -241,7 +241,7 @@ fn color() {
 TODO: 9 of 9 tasks show
 DONE: 1 of 1 tasks show
 total: 10 of 10 tasks show
-"#
+"
         )
     );
 }
@@ -279,12 +279,12 @@ total: 3 of 3 tasks show
     let result = reexec(result.todo_dir, "listall", &["done"]);
     assert_eq!(
         result.stdout,
-        r#"0 x done task
+        r"0 x done task
 --
 TODO: 0 of 2 tasks show
 DONE: 1 of 1 tasks show
 total: 1 of 3 tasks show
-"#
+"
     );
 }
 
@@ -305,20 +305,20 @@ fn listfile() {
     let result = reexec(todo_dir, "listfile", &["todo.txt"]);
     assert_eq!(
         result.stdout,
-        r#"1 new task 1
+        r"1 new task 1
 2 new task 2
 --
 TODO: 2 of 2 tasks show
-"#
+"
     );
 
     let result = reexec(result.todo_dir, "listfile", &["done.txt"]);
     assert_eq!(
         result.stdout,
-        r#"1 x done task
+        r"1 x done task
 --
 DONE: 1 of 1 tasks show
-"#
+"
     );
 }
 
@@ -329,12 +329,12 @@ fn listpri() {
     let result = reexec(todo_dir, "listpri", &[]);
     assert_eq!(
         result.stdout,
-        r#"1 (A) Make peace between Cylons and humans +PeaceProject
+        r"1 (A) Make peace between Cylons and humans +PeaceProject
 2 (B) Report to <i>Admiral Adama</i> about FTL @CIC +Galactica\Repairs due:2013-05-24
 4 (C) Upgrade jump drives with Cylon technology +Galactica\Repairs
 --
 TODO: 3 of 9 tasks show
-"#
+"
     );
 }
 
