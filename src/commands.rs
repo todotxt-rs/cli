@@ -568,19 +568,19 @@ fn print(config: &crate::Config, width: usize, (id, task): (usize, &crate::Task)
 fn print_date(config: &crate::Config, date: &todo_txt::Date) -> String {
     let delta = todo_txt::date::today() - *date;
 
-    let s = if config.reldate && delta.num_days().abs() <= config.reldate_dayrange as i64 {
-        match delta.num_days() {
+    let s = if config.reldate && delta.get_days().abs() <= config.reldate_dayrange as i32 {
+        match delta.get_days() {
             0 => "today".to_string(),
             -1 => "tomorrow".to_string(),
             1 => "yesterday".to_string(),
             7 => "1week".to_string(),
             num if num >= 730 => format!("{}years", num / 365),
             num if num >= 91 => format!("{}months", num / 30),
-            35.. => format!("{}weeks", delta.num_weeks()),
+            35.. => format!("{}weeks", delta.get_weeks()),
             days => format!("{days}ago"),
         }
     } else {
-        date.format("%Y-%m-%d").to_string()
+        date.strftime("%Y-%m-%d").to_string()
     };
 
     config.colors.date.colorize(&s)
@@ -859,9 +859,11 @@ pub(crate) fn report(config: &crate::Config) -> crate::Result {
         .create(true)
         .open(&config.report_file)?;
 
-    let now = chrono::offset::Local::now();
+    let now = jiff::ZonedDateTime::now();
 
-    file.write_all(format!("{} {} {}\n", now.format("%FT%X"), todo.len(), done.len()).as_bytes())?;
+    file.write_all(
+        format!("{} {} {}\n", now.strftime("%FT%X"), todo.len(), done.len()).as_bytes(),
+    )?;
 
     if config.verbose > 0 {
         println!("TODO: Report file updated.");

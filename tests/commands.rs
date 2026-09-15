@@ -248,9 +248,11 @@ total: 10 of 10 tasks show
 
 #[test]
 fn thresold_date() {
-    let tomorrow = todo_txt::date::today().succ_opt().unwrap();
+    use jiff::ToSpan as _;
 
-    let task = format!("Task in future t:{}", tomorrow.format("%Y-%m-%d"));
+    let tomorrow = todo_txt::date::today() + 1.days();
+
+    let task = format!("Task in future t:{}", tomorrow.strftime("%Y-%m-%d"));
     let Result { todo_dir, .. } = exec("add", &[&task]);
 
     let result = reexec(todo_dir, "list", &[]);
